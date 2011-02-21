@@ -1,0 +1,2 @@
+development:
+  database_url: 'postgres://postgres:postgres@localhost/aydamaster_development'

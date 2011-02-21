@@ -6,6 +6,7 @@
    page: 'http://concert.ru/конкретная страница откуда свиснули',
    subject: 'Тема, название события',
    place: 'Место где проходит',
+   category: "Тим события",
    address: 'Адрес где проходит',
    date: дата,
    time: время,
@@ -13,3 +14,12 @@
    details: "дополнительные детали",
    dump: "дамп страницы или блока отуда выдрали информацию"
   }
+
+
+Список источников:
+
+https://spreadsheets.google.com/ccc?key=0ArR1ApxjK8jPdEpWbk9kN1dGNEQwdmhEa19icTAxZlE&hl=en#gid=0
+
+Общий сбор парсеров:
+
+./collector.rb
