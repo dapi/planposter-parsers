@@ -20,7 +20,7 @@ def run_parser(parser_name)
   data = `#{parser_name}`
   if $?==0
     puts "Результат: ok. Разбираю.."
-    load_events JSON.parse(data)
+    load_events parser_name, JSON.parse(data)
   else
     puts "Ошибка: #{$?}"
   end
