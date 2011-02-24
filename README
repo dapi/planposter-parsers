@@ -4,6 +4,7 @@
   {
    source: 'http://concert.ru/',            // ОБЯЗАТЕЛЬНО
    url: 'http://concert.ru/страница.html',  // ОБЯЗАТЕЛЬНО
+   id: 'уникальный инедтификатор события',  // Есть есть
    image_url: 'Адрес картинки события',     // Очень желательно
    subject: 'Тема, название события',       // ОБЯЗАТЕЛЬНО
    category: "Тим события",                 // ОБЯЗАТЕЛЬНО
@@ -13,12 +14,11 @@
    date: дата,                              // ОБЯЗАТЕЛЬНО // Дата отпарсенная в формате  2011-02-24 (YYYY-MM-DD)
    time: время,                             // ОБЯЗАТЕЛЬНО // Например 12:00
    period: длительность в минутах,          // Очень жалательно
-   detail: "дополнительные детали",         // Очень жалательно. Простой текст
+   details: "дополнительные детали",        // Очень жалательно. Простой текст
    dump: "дамп страницы или блока отуда выдрали информацию",  // В любом формате, только укажите его
    dump_type: "text/ruby/xml"
   }
 
-Пример - https://github.com/dapi/planposter-parsers/raw/master/example.json
 
 Если событие встречается в более чем одной катеории, то или оно выводится для каждой категории отдельно,
 либо категории передаютя массивом.
@@ -31,3 +31,15 @@ https://spreadsheets.google.com/ccc?key=0ArR1ApxjK8jPdEpWbk9kN1dGNEQwdmhEa19icTA
 Общий сбор парсеров:
 
 ./collector.rb
+
+
+http://jsonviewer.stack.hu/
+
+
+Тесты и примеры:
+
+Пример json-результата - https://github.com/dapi/planposter-parsers/raw/master/example.json
+
+Скрипт для тестирования импортирования результатов парсинга - https://github.com/dapi/planposter-parsers/raw/master/test_json.rb
+
+Запускать так: ./test_json.rb example.json
