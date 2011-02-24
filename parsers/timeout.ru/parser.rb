@@ -8,6 +8,17 @@ require 'json'
 
 #$stdout = File.open('output.json', 'w')
 
+def retry_parsing(&block)
+  attempt = 10
+  begin
+    return yield
+  rescue OpenURI::HTTPError => e
+    code = e.to_s.split()[0].to_i
+    attempt -= 1
+    retry if attempt > 0 and code == 500
+  end
+end
+
 @categories = {
   'childs'  => 'Дети',
   'theatre' => 'Театр',
@@ -87,7 +98,8 @@ def get_event_details( event_category, event_id )
     end
     details = [data] + details if not data.empty?
   end
-  result['details'] = details.join("\n")
+  details = details.join("\n")
+  result['details'] = details if not details.empty?
   result['period']  = period
   result['dump']    = doc.css("div.contento").to_s
   @events_details[event_category][event_id] = result
@@ -97,12 +109,16 @@ end
 def category_parse( category_name )
   category_events = []
   category_url = [@host_url, category_name, 'schedule'].join('/')
-  doc = Nokogiri::HTML( open(category_url) )
+  doc = nil
+  retry_parsing { doc = Nokogiri::HTML( open(category_url) ) }
+  return if not doc
   dates = doc.css("select[name='date'] option")
   dates.each do |date|
   
     category_url = [@host_url, category_name, 'schedule', date['value']].join('/')
-    doc = Nokogiri::HTML( open(category_url) )
+    doc = nil
+    retry_parsing { doc = Nokogiri::HTML( open(category_url) ) }
+    next if not doc
     events = doc.css("div.w-list div[class~='w-list-block']")
     events.each do |event|
       next if event['class'].scan(/kino|teatr/).empty?
@@ -124,18 +140,22 @@ def category_parse( category_name )
       
       if event_id
         event_category = event.css("h3 a").first()['href'].split('/')[1]
-        details = get_event_details( event_category, event_id )
-        result_event['details']   = details['details'] if not details['details'].empty?
-        result_event['image_url'] = details['image_url'] if details['image_url']
-        result_event['period']    = details['period'] if details['period']
-        result_event['dump']     += [details['dump']]
+        retry_parsing do
+          details = get_event_details( event_category, event_id )
+          result_event['details']   = details['details'] if details['details']
+          result_event['image_url'] = details['image_url'] if details['image_url']
+          result_event['period']    = details['period'] if details['period']
+          result_event['dump']     += [details['dump']]
+        end
       end
       
       event_dump = result_event['dump']
       event.css("div[class~='w-row']").each do |point|
         place_type = point.css("a.w-place").first()['href'].split('/')[1]
         place_id   = point.css("a.w-place").first()['href'].split('/')[-1]
-        place = get_place( place_type, place_id )
+        place = nil
+        retry_parsing { place = get_place( place_type, place_id ) }
+        next if not place
         result_event['city']    = "Москва"
         result_event['place']   = place['name']
         result_event['address'] = place['address']
