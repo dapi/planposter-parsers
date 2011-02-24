@@ -4,48 +4,27 @@ require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
+require 'json'
 
-timeout_schedules = [
-  'http://www.timeout.ru/books/schedule/',
-  'http://www.timeout.ru/childs/schedule/',
-  'http://www.timeout.ru/theatre/schedule/',
-  'http://www.timeout.ru/exhibition/schedule/',
-  'http://www.timeout.ru/music/schedule/',
-  'http://www.timeout.ru/clubs/schedule/',
-  'http://www.timeout.ru/cinema/schedule/',
-  'http://www.timeout.ru/city/schedule/'
-]
+#$stdout = File.open('output.json', 'w')
 
-def puts_event( event )
-  puts <<-EOS
-  {
-    source:   '#{event['source']}',
-    url:      '#{event['page']}',
-    image_url:'#{event['image_url']}',
-    subject:  '#{event['subject']}',
-    place:    '#{event['place']}',
-    category: '#{event['category']}',
-    address:  '#{event['address']}',
-    city:     '#{event['city']}',
-    date:     '#{event['date']}',
-    time:     '#{event['time']}',
-    period:   '#{event['period']}',
-    details:  '#{event['details']}',
-    dump:     '#{event['dump']}'
-  }
-  EOS
-end
-
-categories = [
-  'books',
+@categories = [
   'childs',
   'theatre',
-  'exhibition',
   'music',
   'clubs',
   'cinema',
   'city'
 ]
+
+@category_translate = {
+  'childs'  => 'Дети',
+  'theatre' => 'Театр',
+  'music'   => 'Концерты',
+  'clubs'   => 'Клубы',
+  'cinema'  => 'Кино',
+  'city'    => 'Город'
+}
 
 @host_url = 'http://www.timeout.ru'
 
@@ -60,7 +39,7 @@ def get_place( place_type, place_id )
   if @places.include?(place_type)
     if @places[place_type].include?(place_id)
       place = {
-        'name'   => @places[place_type][place_id]['name'],
+        'name'    => @places[place_type][place_id]['name'],
         'address' => @places[place_type][place_id]['address']
       }
       return place
@@ -71,14 +50,58 @@ def get_place( place_type, place_id )
   
   place_url = [@host_url, place_type, 'place', place_id].join('/')
   doc = Nokogiri::HTML( open(place_url) )
-  doc = doc.css("div[class='vcard context'] div.single")[0]
-  place['name'] = doc.css("div.headingH2 h1").text
-  place['address'] = doc.css("div.contento p.adr").text
+  doc = doc.css("div[class='vcard context'] div.single").first()
+  place['name'] = doc.css("div.headingH2 h1").text().strip
+  place['address'] = doc.css("div.contento p.adr").text().strip
   @places[place_type][place_id] = place
   return place
 end
 
-all_events = {}
+begin
+  @events_details = YAML.load_file('events_details.yml')
+rescue
+  @events_details = {}
+end
+
+def get_event_details( event_category, event_id )
+  result = {}
+  if @events_details.include?(event_category)
+    if @events_details[event_category].include?(event_id)
+      result = {
+        'image_url' => @events_details[event_category][event_id]['image_url'],
+        'details'   => @events_details[event_category][event_id]['details'],
+        'period'    => @events_details[event_category][event_id]['period']
+      }
+      return result
+    end
+  else
+    @events_details[event_category] = {}
+  end
+  
+  event_url = [@host_url, event_category, 'event', event_id].join('/')
+  doc = Nokogiri::HTML( open(event_url) )
+  doc = doc.css("div[class='vcard context'] div.single").first()
+  image_element = doc.css("div#fpic img").first()
+  result['image_url'] = image_element['src'] if image_element != nil
+  details = []
+  period = nil
+  doc.css("div.contento").children.reverse.each do |element|
+    break if element.name == 'div'
+    break if element['class'] != nil
+    data = element.text().strip
+    data.gsub!(/\s+/, ' ')
+    if not data.scan(/^Продолжительность:/).empty?
+      period = data.scan(/\d+/).join().to_i
+      next
+    end
+    details = [data] + details if not data.empty?
+  end
+  result['details'] = details.join("\n")
+  result['period']  = period
+  result['dump']    = doc.css("div.contento").to_s
+  @events_details[event_category][event_id] = result
+  return result
+end
 
 def category_parse( category_name )
   category_events = []
@@ -86,60 +109,71 @@ def category_parse( category_name )
   doc = Nokogiri::HTML( open(category_url) )
   dates = doc.css("select[name='date'] option")
   dates.each do |date|
+  
     category_url = [@host_url, category_name, 'schedule', date['value']].join('/')
     doc = Nokogiri::HTML( open(category_url) )
     events = doc.css("div.w-list div[class~='w-list-block']")
     events.each do |event|
-      next if not ['kino', 'teatr'].include?( event['class'].split()[1] )
-      event_id = event.css("h3 a")[0]['href'].split('/')[-1]
-      if not category_events.include?(event_id)
-        category_events.push( event_id )
-        event_url = [@host_url, category_name, 'event', event_id].join('/')
-        doc = Nokogiri::HTML( open(event_url) )
-        doc = doc.css("div[class='vcard context'] div.single")[0]
-        event = {
-          'url'  => [],
-          'dump' => []
-        }
-        event['source'] = @host_url
-        event['url'].push( event_url )
-        event['image_url'] = doc.css("div#fpic img")[0]['src']
-        event['subject'] = doc.css("div.headingH2 h1")[0].text
-        event['category'] = category_name
-        details = []
-        period = nil
-        doc.css("div.contento").children.reverse.each do |element|
-          break if element.name == 'div'
-          break if element['class'] != nil
-          data = element.text().strip
-          details = [data] + details if not data.empty?
-        end
-        event['details'] = details.reverse().join("\n")
-        event_schedule_url = [@host_url, category_name, 'event', event_id, 'schedule'].join('/')
-        doc = Nokogiri::HTML( open(event_schedule_url) )
-        event_dates = doc.css("div.single div.line-choice select option")
-        event_dates.each do |event_date|
-          event['date'] = event_date['value']
-          event_schedule_url = [@host_url, category_name, 'event', event_id, 'schedule', event['date']].join('/')
-          doc = Nokogiri::HTML( open(event_schedule_url) )
-          event_places = doc.css("div.line-schedule div.shedule")
-          event_places.each do |event_place|
-            place_type = event_place.css("a.as")[0]['href'].split('/')[1]
-            place_id   = event_place.css("a.as")[0]['href'].split('/')[-1]
-            place = get_place( place_type, place_id )
-            event['city'] = "Москва"
-            event['place'] = place['name']
-            event['address'] = place['address']
-            #######################
-            #######################
-            puts_event( event )####
-            #######################
-            #######################
-          end
+      next if event['class'].scan(/kino|teatr/).empty?
+      result_event = {}
+      result_event['source']    = @host_url
+      result_event['url']       = [category_url]
+      result_event['date']      = date['value']
+      result_event['dump_type'] = 'text'
+      
+      result_event['dump'] = [event.css("h3").to_s]
+      if event.css("h3 a").empty?
+        event_id = nil
+      else
+        event_id = event.css("h3 a").first()['href'].split('/')[-1]
+        result_event['url'] += [ @host_url+event.css("h3 a").first()['href'] ]
+      end
+      result_event['subject'] = event.css("h3 i").text().strip
+      result_event['category'] = @category_translate[category_name]
+      
+      if event_id
+        event_category = event.css("h3 a").first()['href'].split('/')[1]
+        details = get_event_details( event_category, event_id )
+        result_event['details']   = details['details']
+        result_event['image_url'] = details['image_url']
+        result_event['period']    = details['period']
+        result_event['dump']     += [details['dump']]
+      end
+      
+      event_dump = result_event['dump']
+      event.css("div[class~='w-row']").each do |point|
+        place_type = point.css("a.w-place").first()['href'].split('/')[1]
+        place_id   = point.css("a.w-place").first()['href'].split('/')[-1]
+        place = get_place( place_type, place_id )
+        result_event['city']    = "Москва"
+        result_event['place']   = place['name']
+        result_event['address'] = place['address']
+        result_event['dump']    = event_dump + [point.to_s]
+        times = point.css(".w-time-lime").text().split(',')
+        times.each do |time|
+          result_event['time'] = time.strip
+          #####################################
+          #####################################
+          puts "#{result_event.to_json},\n"####
+          #####################################
+          #####################################
         end
       end
+      
     end
   end
 end
 
-category_parse("cinema")
+#category_parse('cinema')
+
+puts '[\n'
+@categories.each { |x| category_parse(x) }
+puts ']'
+
+places_yml = File.open('places.yml', 'w')
+places_yml.write( @places.to_yaml )
+places_yml.close()
+
+events_details_yml = File.open('events_details.yml', 'w')
+events_details_yml.write( @events_details.to_yaml )
+events_details_yml.close()
