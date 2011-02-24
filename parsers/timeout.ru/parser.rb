@@ -8,16 +8,7 @@ require 'json'
 
 #$stdout = File.open('output.json', 'w')
 
-@categories = [
-  'childs',
-  'theatre',
-  'music',
-  'clubs',
-  'cinema',
-  'city'
-]
-
-@category_translate = {
+@categories = {
   'childs'  => 'Дети',
   'theatre' => 'Театр',
   'music'   => 'Концерты',
@@ -129,7 +120,7 @@ def category_parse( category_name )
         result_event['url'] += [ @host_url+event.css("h3 a").first()['href'] ]
       end
       result_event['subject'] = event.css("h3 i").text().strip
-      result_event['category'] = @category_translate[category_name]
+      result_event['category'] = @categories[category_name]
       
       if event_id
         event_category = event.css("h3 a").first()['href'].split('/')[1]
@@ -167,7 +158,7 @@ end
 #category_parse('cinema')
 
 puts "[\n"
-@categories.each { |x| category_parse(x) }
+@categories.keys.each { |x| category_parse(x) }
 puts "]"
 
 places_yml = File.open('places.yml', 'w')
