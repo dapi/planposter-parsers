@@ -166,9 +166,9 @@ end
 
 #category_parse('cinema')
 
-puts '[\n'
+puts "[\n"
 @categories.each { |x| category_parse(x) }
-puts ']'
+puts "]"
 
 places_yml = File.open('places.yml', 'w')
 places_yml.write( @places.to_yaml )
