@@ -125,9 +125,9 @@ def category_parse( category_name )
       if event_id
         event_category = event.css("h3 a").first()['href'].split('/')[1]
         details = get_event_details( event_category, event_id )
-        result_event['details']   = details['details']
-        result_event['image_url'] = details['image_url']
-        result_event['period']    = details['period']
+        result_event['details']   = details['details'] if not details['details'].empty?
+        result_event['image_url'] = details['image_url'] if details['image_url']
+        result_event['period']    = details['period'] if details['period']
         result_event['dump']     += [details['dump']]
       end
       
