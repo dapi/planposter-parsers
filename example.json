@@ -1,0 +1,50 @@
+[
+  {
+    "place": "Конюшня дяди Степы",
+    "date": "2010-11-22",
+    "source": "http://concert.ru/",
+    "address": "Адрес где проходит",
+    "url": "http://concert.ru/123.html",
+    "city": "Москва",
+    "dump": "дамп страницы или блока отуда выдрали информацию",
+    "image_url": "http://pix.timeout.ru/249655.jpeg",
+    "period": 60,
+    "time": "17:00",
+    "subject": "Мадонна в каташе",
+    "dump_type": "text",
+    "details": "дополнительные детали",
+    "category": "Тим события"
+  },
+  {
+    "place": "Конюшня дяди Степы",
+    "date": "2010-11-22",
+    "source": "http://concert.ru/",
+    "address": "Адрес где проходит",
+    "url": "http://concert.ru/123.html",
+    "city": "Москва",
+    "dump": "дамп страницы или блока отуда выдрали информацию",
+    "image_url": "http://pix.timeout.ru/249655.jpeg",
+    "period": 60,
+    "time": "17:00",
+    "subject": "Мадонна в каташе",
+    "dump_type": "text",
+    "details": "дополнительные детали",
+    "category": "Тим события"
+  },
+  {
+    "place": "Конюшня дяди Степы",
+    "date": "2010-11-22",
+    "source": "http://concert.ru/",
+    "address": "Адрес где проходит",
+    "url": "http://concert.ru/123.html",
+    "city": "Москва",
+    "dump": "дамп страницы или блока отуда выдрали информацию",
+    "image_url": "http://pix.timeout.ru/249655.jpeg",
+    "period": 60,
+    "time": "17:00",
+    "subject": "Мадонна в каташе",
+    "dump_type": "text",
+    "details": "дополнительные детали",
+    "category": "Тим события"
+  }
+]

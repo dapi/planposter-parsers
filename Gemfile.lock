@@ -17,7 +17,6 @@ GEM
     activesupport (3.0.4)
     addressable (2.2.4)
     backports (1.18.2)
-    builder (3.0.0)
     capybara (0.4.1.2)
       celerity (>= 0.7.9)
       culerity (>= 0.2.4)
@@ -91,9 +90,6 @@ GEM
     fastercsv (1.5.4)
     ffi (0.6.3)
       rake (>= 0.8.7)
-    hoptoad_notifier (2.4.6)
-      activesupport
-      builder
     i18n (0.5.0)
     json (1.5.1)
     json_pure (1.5.1)
@@ -159,7 +155,6 @@ DEPENDENCIES
   dm-paperclip
   dm-postgres-adapter
   dm-sqlite-adapter
-  hoptoad_notifier
   i18n
   json
   loop_dance!

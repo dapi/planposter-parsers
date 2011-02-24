@@ -7,7 +7,7 @@ gem 'dm-postgres-adapter'
 gem 'dm-paperclip'
 gem 'json'
 gem 'i18n'
-gem 'hoptoad_notifier'
+# gem 'hoptoad_notifier'
 
 gem 'json'
 
