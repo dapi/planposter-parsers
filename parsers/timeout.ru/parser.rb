@@ -8,7 +8,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'uri'
 
-ParseUtils.debug = false
+@parser = ParseUtils.new(false) # debug отключен
 
 def retry_if_exception(&block)
   attempt = 10
@@ -166,7 +166,7 @@ def category_parse( category_name )
           result_event['time'] = time.strip
           #####################################
           #####################################
-          ParseUtils.save_event result_event
+          @parser.save_event result_event
           #####################################
           #####################################
         end
