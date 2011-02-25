@@ -5,3 +5,4 @@ public/rotator.min.js
 .#*
 /.rake_tasks*
 log/
+tmp/

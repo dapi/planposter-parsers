@@ -1,11 +1,11 @@
-ENV['RACK_ENV'] ||= "development"
+$environment = ENV['RACK_ENV'] ||= "development"
 
 require 'bundler/setup'
 
 Bundler.require(:default)
-Bundler.require(Sinatra::Base.environment)
+Bundler.require($environment)
 
-require 'config/initializers/configuration'
-require 'config/initializers/database'
-
-set :public, 'public'
+@config = YAML.load(File.read('config/config.yml'))[$environment]
+DataMapper.setup(:default, @config['database_url'])
+Dir["models/*.rb"].each{|f| require f}
+DataMapper.finalize
