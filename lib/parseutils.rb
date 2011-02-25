@@ -18,13 +18,15 @@ class ParseUtils
     filename = event.uid
     filename = (event.url.is_a?(Array) ?  event.url.join(',') : event.url) + event.subject unless filename
     filename.gsub! event.source, ''
+    filename.gsub! '/','-'
     filename = Russian.translit(filename).gsub(/[^a-z0-9\-_\,]/i,'_')
     filename.gsub! /_*(http|www)_*/, ''
-    filename.gsub! /__+/, '_'
     filename.gsub! /_+\./, '.'
-    raise "Не указан id или url для события" unless filename
-    filename.slice!(0,50)
-    "#{event.index}-" + filename + '.json'
+    filename = filename.slice(0,70)
+    filename.gsub! /__+/, '_'
+    filename.gsub! /--+/, '-'
+    zeros=(1..(6-event.index.to_s.length)).to_a.collect {'0'}.join
+    "#{zeros}#{event.index}-" + filename + '.json'
   end
   
   def save_event event
@@ -34,10 +36,14 @@ class ParseUtils
     event = OpenStruct.new event
     filename = generate_filename( event )
     File.open( './data/'+filename, 'w' ) do |f|
-      print  event.index, "\t", event.category, "\t", event.place, "\t", event.subject
+      print  "#{event.index}\t#{event.place} (#{event.category})\t#{event.subject}"
       print "\n"
       f.write event.marshal_dump.to_json
     end
+  end
+
+  def load_event event
+    Event.create_from_parser event
   end
   
  end
