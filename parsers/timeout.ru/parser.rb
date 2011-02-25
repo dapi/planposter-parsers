@@ -30,8 +30,9 @@ end
 
 @host_url = 'http://www.timeout.ru'
 
+@places_yml_path = File.expand_path(File.dirname(__FILE__) + "places.yml")
 begin
-  @places = YAML.load_file('places.yml')
+  @places = YAML.load_file(@places_yml_path)
 rescue
   @places = {}
 end
@@ -55,8 +56,9 @@ def get_place( place_type, place_id )
   return place
 end
 
+@events_details_yml_path = File.expand_path(File.dirname(__FILE__) + "events_details.yml")
 begin
-  @events_details = YAML.load_file('events_details.yml')
+  @events_details = YAML.load_file(@events_details_yml_path)
 rescue
   @events_details = {}
 end
@@ -178,10 +180,10 @@ puts "[\n"
 @categories.keys.each { |x| category_parse(x) }
 puts "]"
 
-places_yml = File.open('places.yml', 'w')
+places_yml = File.open(@places_yml_path, 'w')
 places_yml.write( @places.to_yaml )
 places_yml.close()
 
-events_details_yml = File.open('events_details.yml', 'w')
+events_details_yml = File.open(@events_details_yml_path, 'w')
 events_details_yml.write( @events_details.to_yaml )
 events_details_yml.close()
