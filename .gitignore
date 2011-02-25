@@ -4,5 +4,6 @@ public/rotator.min.js
 .bundle
 .#*
 /.rake_tasks*
+parsers/*/data
 log/
 tmp/

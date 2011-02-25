@@ -1,22 +1,18 @@
 # -*- coding: utf-8 -*-
 source 'http://rubygems.org'
 
-gem 'sinatra'
 gem 'dm-core'
 gem 'dm-postgres-adapter'
 gem 'dm-paperclip'
 gem 'json'
 gem 'i18n'
 gem 'nokogiri'
+gem 'russian'
 # gem 'hoptoad_notifier'
 
 gem 'json'
 
-gem 'loop_dance', :path => '/home/danil/code/gems/loop_dance'
-
-group :development do
-  gem 'sinatra-reloader', :require => 'sinatra/reloader'
-end
+# gem 'loop_dance', :path => '/home/danil/code/gems/loop_dance'
 
 # Vlad не живет с синатрой
 group :deploy do

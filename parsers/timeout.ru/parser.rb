@@ -1,12 +1,14 @@
-$KCODE = 'u'
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 
-require 'rubygems'
+$: << File.expand_path(File.dirname(__FILE__) + '/../..')
+require 'lib/parseutils'
+
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
-require 'json'
 
-#$stdout = File.open('output.json', 'w')
+ParseUtils.debug = false
 
 def retry_if_exception(&block)
   attempt = 10
@@ -164,7 +166,7 @@ def category_parse( category_name )
           result_event['time'] = time.strip
           #####################################
           #####################################
-          puts "#{result_event.to_json},\n"####
+          ParseUtils.save_event result_event
           #####################################
           #####################################
         end
@@ -176,9 +178,7 @@ end
 
 #category_parse('cinema')
 
-puts "[\n"
 @categories.keys.each { |x| category_parse(x) }
-puts "]"
 
 places_yml = File.open(@places_yml_path, 'w')
 places_yml.write( @places.to_yaml )
