@@ -8,7 +8,7 @@ require 'json'
 
 #$stdout = File.open('output.json', 'w')
 
-def retry_parsing(&block)
+def retry_if_exception(&block)
   attempt = 10
   begin
     return yield
@@ -40,11 +40,7 @@ def get_place( place_type, place_id )
   place = {}
   if @places.include?(place_type)
     if @places[place_type].include?(place_id)
-      place = {
-        'name'    => @places[place_type][place_id]['name'],
-        'address' => @places[place_type][place_id]['address']
-      }
-      return place
+      return @places[place_type][place_id]
     end
   else
     @places[place_type] = {}
@@ -69,12 +65,7 @@ def get_event_details( event_category, event_id )
   result = {}
   if @events_details.include?(event_category)
     if @events_details[event_category].include?(event_id)
-      result = {
-        'image_url' => @events_details[event_category][event_id]['image_url'],
-        'details'   => @events_details[event_category][event_id]['details'],
-        'period'    => @events_details[event_category][event_id]['period']
-      }
-      return result
+      return @events_details[event_category][event_id]
     end
   else
     @events_details[event_category] = {}
@@ -101,7 +92,8 @@ def get_event_details( event_category, event_id )
   details = details.join("\n")
   result['details'] = details if not details.empty?
   result['period']  = period
-  result['dump']    = doc.css("div.contento").to_s
+  dump = doc.css("div.contento").to_s
+  result['dump']    = dump if not dump.empty?
   @events_details[event_category][event_id] = result
   return result
 end
@@ -110,14 +102,18 @@ def category_parse( category_name )
   category_events = []
   category_url = [@host_url, category_name, 'schedule'].join('/')
   doc = nil
-  retry_parsing { doc = Nokogiri::HTML( open(category_url) ) }
+  retry_if_exception do
+    doc = Nokogiri::HTML( open(category_url) )
+  end
   return if not doc
   dates = doc.css("select[name='date'] option")
   dates.each do |date|
   
     category_url = [@host_url, category_name, 'schedule', date['value']].join('/')
     doc = nil
-    retry_parsing { doc = Nokogiri::HTML( open(category_url) ) }
+    retry_if_exception do
+      doc = Nokogiri::HTML( open(category_url) )
+    end
     next if not doc
     events = doc.css("div.w-list div[class~='w-list-block']")
     events.each do |event|
@@ -140,12 +136,12 @@ def category_parse( category_name )
       
       if event_id
         event_category = event.css("h3 a").first()['href'].split('/')[1]
-        retry_parsing do
+        retry_if_exception do
           details = get_event_details( event_category, event_id )
           result_event['details']   = details['details'] if details['details']
           result_event['image_url'] = details['image_url'] if details['image_url']
           result_event['period']    = details['period'] if details['period']
-          result_event['dump']     += [details['dump']]
+          result_event['dump']     += [details['dump']] if details['dump']
         end
       end
       
@@ -154,7 +150,9 @@ def category_parse( category_name )
         place_type = point.css("a.w-place").first()['href'].split('/')[1]
         place_id   = point.css("a.w-place").first()['href'].split('/')[-1]
         place = nil
-        retry_parsing { place = get_place( place_type, place_id ) }
+        retry_if_exception do
+          place = get_place( place_type, place_id )
+        end
         next if not place
         result_event['city']    = "Москва"
         result_event['place']   = place['name']
