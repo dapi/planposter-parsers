@@ -39,31 +39,26 @@
 Если событие встречается в более чем одной катеории, то или оно выводится для каждой категории отдельно,
 либо категории передаютя массивом.
 
-
-# Список источников:
+# Источники:
 
 https://spreadsheets.google.com/ccc?key=0ArR1ApxjK8jPdEpWbk9kN1dGNEQwdmhEa19icTAxZlE&hl=en#gid=0
 
-
-[Сайт для форматирвание json (реальной валидации не делает)](http://jsonviewer.stack.hu/)
-
-
-# Тесты и примеры:
+# Примеры и примеры:
 
 [Пример json-результата](https://github.com/dapi/planposter-parsers/raw/master/utils/example.json)
 
 Парсинг данных:
 
-cd ./parsers/timeout.ru
-parser.rb
+    cd ./parsers/timeout.ru
+    parser.rb
 
 Загрузка всех отпарсенных данных:
 
-RACK_ENV=test ./collect.rb ./parsers/timeout.ru/data/
+    RACK_ENV=test ./collect.rb ./parsers/timeout.ru/data/
 
 или, для загрузки конкретного файла:
 
-./collect.rb 123.json
+    ./collect.rb 123.json
 
 после удачной загрузки файла коллектор его удаляет.
 
