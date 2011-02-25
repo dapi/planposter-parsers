@@ -42,8 +42,15 @@ class ParseUtils
     end
   end
 
-  def load_event event
-    Event.create_from_parser event
+  def load_file file
+    puts file
+    json = File.open(file).read
+    event = JSON.parse(json)
+    if Event.create_from_parser event
+      File.delete(file)
+    end
+    print "\n"
   end
+  
   
  end

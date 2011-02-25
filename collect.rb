@@ -13,13 +13,14 @@ require 'lib/parseutils'
 
 parser = ParseUtils.new
 ARGV.each do |dir|
-  Dir.glob(dir+'*.json').sort.each do |file|
-    puts file
-    json = File.open(file).read
-    event = JSON.parse(json)
-    parser.load_event event
-    print "\n"
+  if File.directory?(dir)
+    Dir.glob(dir+'*.json').sort.each do |file|
+      parser.load_file file
+    end
+  else
+    parser.load_file dir
   end
+  
 end
 
 # if ARGV[0]

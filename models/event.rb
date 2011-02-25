@@ -35,6 +35,9 @@ class Event
     # raise "Не найдена категория: #{data['category']} для #{data.inspect}" unless category
     city  = City.first(:name=>data["city"]) || City.create(:name=>data["city"])
     data["subject"] = data["subject"].gsub('http://','').gsub('/','')
+    data.each_key do |key|
+      data[key].strip! if data[key].is_a? String
+    end
     attrs = {
       :subject => data["subject"],
       :source => data["source"],
@@ -49,6 +52,7 @@ class Event
       :created_at => Time.now
     }
     attrs[:time] = data["time"] unless data["time"].blank?
+    
     print "#{attrs[:date]} #{attrs[:time] || '-'} #{data['place']} (#{data['category']})\t| #{attrs[:subject]}"
     if event = Event.first(
         :subject => attrs[:subject],
@@ -58,10 +62,11 @@ class Event
         )
       print " - DUP"
     else
-      event = create( attrs )
+      return nil unless event = create( attrs )
       # print "- CAN'T SAVE: #{event}"
     end
     print " = #{event.id}\n"
+    event
   end
   
 end
