@@ -52,11 +52,19 @@ https://spreadsheets.google.com/ccc?key=0ArR1ApxjK8jPdEpWbk9kN1dGNEQwdmhEa19icTA
 
 [Пример json-результата](https://github.com/dapi/planposter-parsers/raw/master/utils/example.json)
 
-[Скрипт для тестирования импортирования результатов парсинга](https://github.com/dapi/planposter-parsers/raw/master/utils/test_json.rb)
+Парсинг данных:
 
-Запускать так: `./test_json.rb example.json`
+cd ./parsers/timeout.ru
+parser.rb
 
-Общий сбор парсеров:
+Загрузка всех отпарсенных данных:
 
-    ./collector.rb
+RACK_ENV=test ./collect.rb ./parsers/timeout.ru/data/
+
+или, для загрузки конкретного файла:
+
+./collect.rb 123.json
+
+после удачной загрузки файла коллектор его удаляет.
+
 
