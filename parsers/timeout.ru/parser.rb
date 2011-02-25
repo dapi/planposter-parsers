@@ -99,7 +99,6 @@ def get_event_details( event_category, event_id )
 end
 
 def category_parse( category_name )
-  category_events = []
   category_url = [@host_url, category_name, 'schedule'].join('/')
   doc = nil
   retry_if_exception do
