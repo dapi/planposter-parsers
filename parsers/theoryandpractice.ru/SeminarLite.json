@@ -1,0 +1,54 @@
+{
+    "context" : "//div[@class='columns'][1]",
+    "data" :
+     {
+        "title"     : "string(.//div[starts-with(@class, 'seminarContent')]//div[@class='text']/h1)",
+        "poster"    : "string(.//div[@class='seminarPoster']//img/@src)",
+        "date"      : "string(.//span[@class='date'])",
+        "time"      : "string(.//span[@class='time'])",
+        "seminarDescription" :
+        {
+            "context" : ".//div[starts-with(@class, 'seminarContent')]//div[@class='text']",
+            "data" :
+            {
+                "type"  : "string(h4)",
+                "descr" : [".//p"]
+            }
+        },
+        "place" :
+        {
+            "context"   : ".//div[@class='seminarContent']//div[contains(@class,'place')]",
+            "data"  :
+            {
+                "title"     : "string(.//h6/a)",
+                "link"      : "string(.//h6/a/@href)",
+                "phone"     : ".//p[2]/text()",
+                "site"      : "string(.//p[2]/a)",
+                "address"   : "string(.//p[1]/a)",
+                "addressUrl": "string(.//p[1]/a/@href)"
+            }
+        },
+        "price" : ".//div[@class='seminarContent']//div[contains(@class,'price')]/text()",
+        "presenters" :
+        {
+            "context" : ".//div[@class='seminarContent']//div[@class='showPresenterBlock']",
+            "data" :
+            [{
+                "photo" : "string(div[@class='photo']/a/img/@src)",
+                "name" : "string(h6)",
+                "url" : "string(h6/a/@href)",
+                "short" : "string(div[@class='description content'])"
+            }]
+        },
+        "organizers" :
+        {
+            "context" : ".//div[contains(@class,'showOrganizerBlock')]",
+            "data" :
+            [{
+                "title" : "string(h6[1]/a)",
+                "url"   : "string(h6[1]/a/@href)",
+                "short" : "string(div[@class='description content'][1])"
+            }]
+        }
+    }
+}
