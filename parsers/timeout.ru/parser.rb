@@ -163,7 +163,8 @@ def category_parse( category_name )
         result_event['dump']    = event_dump + [point.to_s]
         times = point.css(".w-time-lime").text().split(',')
         times.each do |time|
-          result_event['time'] = time.strip
+          result_event['time'] = time.gsub(/[^\d:]+/, '')
+          next if result_event['time'].empty?
           #####################################
           #####################################
           @parser.save_event result_event
