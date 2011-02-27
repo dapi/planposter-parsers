@@ -18,12 +18,12 @@ class Parser
     protected $snapshot;
     protected $debug_log;
     protected $debug_mode;
-    protected $use_snapshot;
+    protected $include_snapshot;
     protected $extractHelper;
 
-    function  __construct($use_snapshot = false, $debug_mode = true)
+    function  __construct($include_snapshot = false, $debug_mode = true)
     {
-        $this->use_snapshot = $use_snapshot;
+        $this->include_snapshot = $include_snapshot;
         $this->debug_mode = $debug_mode;
         $this->html = new Html();
         

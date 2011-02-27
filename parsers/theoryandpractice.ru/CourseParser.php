@@ -15,12 +15,16 @@ include_once 'Course.php';
 
 class CourseParser extends Parser
 {
-    protected  $cityList;
-    protected  $output_json;
-    
-    function  __construct($use_snapshot, $debug_mode)
+    protected $cityList;
+    protected $output_json;
+    protected $file_name_counter;
+
+
+    function  __construct($include_snapshot, $debug_mode)
     {
-        parent::__construct($use_snapshot, $debug_mode);
+        parent::__construct($include_snapshot, $debug_mode);
+
+        $this->file_name_counter = 0;
         $this->output_json = fopen("output_course.json", "w+");
         fwrite($this->output_json, "[\n");
     }
@@ -65,11 +69,9 @@ class CourseParser extends Parser
                     {
                         $this->deb($pageUrl);
                         $course = $this->parsePage($domain . $pageUrl, "Course.json");
-                        $course['url'] = $pageUrl;
+                        $course['url'] = $domain . $pageUrl;
                         $course['source'] = $domain;
-                        if ($this->use_snapshot)
-                            $course['snapshot'] = $this->snapshot;
-                        $course['snapshot'] = '';
+                        $course['snapshot'] = $this->include_snapshot ? $this->snapshot : '';
                         $course['category'] = 'Курс';
                         $course['city'] = $city;
                         $course['uid'] = '';
@@ -77,7 +79,7 @@ class CourseParser extends Parser
 
                         $Course = new Course($course);
 
-                        $this->changeOutputJsonFile("data/course_". md5($course['url'] . time()) . ".json");
+                        $this->changeOutputJsonFile("data/course_". ++$this->file_name_counter . ".json");
                         fwrite($this->output_json, $Course->export()."\n");
                     }
 

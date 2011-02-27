@@ -14,12 +14,13 @@ include_once 'Seminar.php';
 
 class SeminarParser extends Parser{
 
-    protected  $cityList;
-    protected  $output_json;
+    protected $cityList;
+    protected $output_json;
+    protected $file_name_counter;
 
-    function  __construct($use_snapshot, $debug_mode)
+    function  __construct($include_snapshot, $debug_mode)
     {
-        parent::__construct($use_snapshot, $debug_mode);
+        parent::__construct($include_snapshot, $debug_mode);
 
         $this->output_json = fopen("output_seminar.json", "w+");
         fwrite($this->output_json, "[\n");
@@ -71,11 +72,9 @@ class SeminarParser extends Parser{
                         $this->deb($pageUrl);
                         $seminar = $this->parsePage($domain . $pageUrl, $lite ? "SeminarLite.json" : "Seminar.json");
                         
-                        $seminar['url'] = $pageUrl;
+                        $seminar['url'] = $domain . $pageUrl;
                         $seminar['source'] = $domain;
-                        if ($this->use_snapshot)
-                            $seminar['snapshot'] = $this->snapshot;
-                        $seminar['snapshot'] = '';
+                        $seminar['snapshot'] = $this->include_snapshot ? $this->snapshot : '';
                         $seminar['category'] = 'Семинар';
                         $seminar['city'] = $city;
                         $seminar['uid'] = '';
@@ -83,7 +82,7 @@ class SeminarParser extends Parser{
 
                         $Seminar = new Seminar($seminar);
 
-                        $this->changeOutputJsonFile("data/seminar_". md5($seminar['url'] . time()) . ".json");
+                        $this->changeOutputJsonFile("data/seminar_". ++$this->file_name_counter . ".json");
                         fwrite($this->output_json, $Seminar->export() ."\n");
                         //echo "\n\n</pre>";
                     }

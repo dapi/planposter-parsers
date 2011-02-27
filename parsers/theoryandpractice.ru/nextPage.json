@@ -1,3 +1,0 @@
-{
-    "nextPage"      : "string(//div[@class='pagination']//a[contains(@class,'next_page')]/@href)"
-}

@@ -1,7 +1,0 @@
-{
-    "context"   : "//div[@class='newMediumSeminar']//h3/a",
-    "data"      :
-    [{
-        "url"   : "string(@href)"
-    }]
-}
