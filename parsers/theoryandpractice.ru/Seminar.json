@@ -1,0 +1,55 @@
+{
+    "context" : "//div[@class='columns'][1]",
+    "data" :
+     {
+        "title"     : "string(h1)",
+        "poster"    : "string(.//div[@class='seminarPoster']//img/@src)",
+        "date"      : "string(.//span[@class='date'])",
+        "time"      : "string(.//span[@class='time'])",
+        "seminarDescription" :
+        {
+            "context" : ".//div[starts-with(@class, 'seminarDescription')]",
+            "data" :
+            {
+                "type"  : "string(h3)",
+                "descr" : "string(.//p[1])",
+                "notes" : "string(.//p[2])"
+            }
+        },
+        "place" :
+        {
+            "context"   : ".//div[@class='placePreview']",
+            "data"  :
+            {
+                "title"     : "string(.//h2/a)",
+                "link"      : "string(.//h2/a/@href)",
+                "phone"     : "string(.//div[@class='phone'])",
+                "site"      : "string(.//div[@class='website']/a/@href)",
+                "address"   : "string(.//div[@class='address']/a)",
+                "addressUrl": "string(.//div[@class='address']/a/@href)"
+            }
+        },
+        "price" : "string(.//div[@class='seminarPriceValue'])",
+        "presenters" :
+        {
+            "context" : ".//div[@class='presenterPreview']",
+            "data" :
+            [{
+                "photo" : "string(.//img/@src)",
+                "name" : "string(.//h2/a)",
+                "url" : "string(.//h2/a/@href)",
+                "short" : "string(.//p)"
+            }]
+        },
+        "organizers" :
+        {
+            "context" : ".//div[@class='organizerPreview']",
+            "data" :
+            [{
+                "title" : "string(.//h2/a)",
+                "url" : "string(.//h2/a/@href)",
+                "short" : "string(.//p)"
+            }]
+        }
+    }
+}
