@@ -15,10 +15,18 @@ parser = ParseUtils.new
 ARGV.each do |dir|
   if File.directory?(dir)
     Dir.glob(dir+'*.json').sort.each do |file|
-      parser.load_file file
+      begin
+        parser.load_file file
+      rescue
+        next
+      end
     end
   else
-    parser.load_file dir
+    begin
+      parser.load_file dir
+    rescue
+      next
+    end
   end
   
 end

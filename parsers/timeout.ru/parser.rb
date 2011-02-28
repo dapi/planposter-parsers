@@ -35,6 +35,13 @@ def retry_if_exception(&block)
   end
 end
 
+@cities = {
+  2 => 'Москва',
+  3 => 'Санкт-Петербург',
+  5 => 'Омск',
+  7 => 'Красноярск'
+}
+
 @categories = {
   'childs'  => 'Дети',
   'theatre' => 'Театр',
@@ -116,7 +123,7 @@ def get_event_details( event_category, event_id )
   return result
 end
 
-def category_parse( category_name )
+def category_parse( category_name, city_id )
   category_url = [@host_url, category_name, 'schedule'].join('/')
   doc = nil
   retry_if_exception do
@@ -173,7 +180,7 @@ def category_parse( category_name )
           place = get_place( place_type, place_id )
         end
         next if not place
-        result_event['city']    = "Москва"
+        result_event['city']    = @cities[city_id]
         result_event['place']   = place['name']
         result_event['address'] = place['address']
         result_event['dump']    = event_dump + [point.to_s]
@@ -194,10 +201,11 @@ def category_parse( category_name )
   end
 end
 
-easy_curl("http://www.timeout.ru/")
-easy_curl("http://www.timeout.ru/?city=2")
-#category_parse('cinema')
-@categories.keys.each { |x| category_parse(x) }
+@cities.keys.each do |city_id|
+  easy_curl("http://www.timeout.ru/?city=#{city_id}")
+  #category_parse('cinema', city_id)
+  @categories.keys.each { |x| category_parse(x, city_id) }
+end
 
 places_yml = File.open(@places_yml_path, 'w')
 places_yml.write( @places.to_yaml )
