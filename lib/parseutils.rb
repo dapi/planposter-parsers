@@ -50,6 +50,7 @@ class ParseUtils
       File.delete(file)
     end
     print "\n"
+    rescue
   end
   
   
