@@ -1,6 +1,5 @@
-GIT
-  remote: git://github.com/dapi/vlad-helpers.git
-  revision: bb025c8accd97129e4dba97017c5a419b767c5a2
+PATH
+  remote: /home/danil/code/gems/vlad-helpers
   specs:
     vlad-helpers (0.2.7)
 
