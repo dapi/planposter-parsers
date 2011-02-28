@@ -8,13 +8,13 @@ class Event
   property :id,          Serial
   # property :uid,         String
   property :subject,     String
-  property :url,         String
+  property :url,         Text
   property :source,      String
   property :date,        Date
   property :time,        String
   property :created_at,  Time
   property :period,      Integer
-  property :address,     String
+  property :address,     Text
   property :category_id, Integer
   property :city_id,     Integer
   property :place,       String
