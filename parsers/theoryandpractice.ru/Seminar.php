@@ -25,6 +25,38 @@ class Seminar
             $this->d['date'] = decodeDate(preg_replace("/\./", '', $this->d['date']));
         if (isset($this->d['place']['link']))
             $this->d['place']['link'] = $this->d['source'] . $this->d['place']['link'];
+        if(isset($this->d['lite']))
+        {
+            if(isset($this->d['seminarDescription']['title']))
+            {
+                $this->d['title'] = $this->d['seminarDescription']['title'];
+                unset($this->d['seminarDescription']['title']);
+            }
+            if(isset($this->d['seminarDescription']['descr']))
+            {
+                $this->d['descr'] = $this->d['seminarDescription']['descr'];
+                unset($this->d['seminarDescription']['descr']);
+            }
+            if(isset($this->d['organizers']) && isset($this->d['organizers']['titleNodes']))
+            {
+                $titleNodes = $this->d['organizers']['titleNodes'];
+                $shortNodes = $this->d['organizers']['shortNodes'];
+                if($titleNodes->length == $shortNodes->length)
+                {
+                    for($i=0; $i < $titleNodes->length; ++$i)
+                    {
+                        $n = $titleNodes->item($i);
+                        $a = array();
+                        $a['title'] = $n->nodeValue;
+                        $a['url']   = $n->attributes->getNamedItem('href')->nodeValue;
+                        $a['short'] = $shortNodes->item($i)->textContent;
+                        $this->d['organizers'][$i] = $a;
+                    }
+                }
+                unset($this->d['organizers']['titleNodes']);
+                unset($this->d['organizers']['shortNodes']);
+            }
+        }
     }
     protected function getDetails()
     {
@@ -74,7 +106,7 @@ class Seminar
         }
         return $s;
     }
-    public function export()
+    public function toJsonString()
     {
         $this->validate();
         $json = array
@@ -83,12 +115,12 @@ class Seminar
             'url'       => $this->d['url'],
             'uid'       => $this->d['uid'],
             'image_url' => $this->d['poster'],
-            'subject'   => $this->d['title'],
+            'subject'   => isset($this->d['title']) ? $this->d['title'] : '',
             'category'  => $this->d['category'],
             'place'     => isset($this->d['place']['title']) ? $this->d['place']['title'] : '',
             'address'   => isset($this->d['place']['address']) ? $this->d['place']['address'] : '',
             'city'      => $this->d['city'],
-            'date'      => isset($this->d['date']) ? $this->d['date'] : '' ,
+            'date'      => $this->d['date'],
             'time'      => isset($this->d['time']) ? $this->d['time'] : '',
             'period'    => '',
             'details'   => $this->getDetails(),
@@ -97,6 +129,12 @@ class Seminar
         );
 
         return preg_replace("/\"\,\"/", "\",\n\"", json_fix_cyr(json_encode($json)));
+    }
+    public function toJsonFile($fname)
+    {
+        $f = fopen($fname, "w");
+        fwrite($f, $this->toJsonString());
+        fclose($f);
     }
 }
 ?>

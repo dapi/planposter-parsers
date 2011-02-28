@@ -93,7 +93,7 @@ class Course {
         return $s;
     }
 
-    public function export()
+    public function toJsonString()
     {
         $this->validate();
         
@@ -116,6 +116,12 @@ class Course {
         );
 
         return preg_replace("/\"\,\"/", "\",\n\"", json_fix_cyr(json_encode($json)));
+    }
+    public function toJsonFile($fname)
+    {
+        $f = fopen($fname, "w");
+        fwrite($f, $this->toJsonString());
+        fclose($f);
     }
 }
 ?>

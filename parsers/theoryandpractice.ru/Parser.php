@@ -48,8 +48,15 @@ class Parser
     {
         $this->snapshot     = $this->html->loadFromUrl($url);
         $this->xpath        = $this->html->xpath_from_string($this->snapshot);
-        $description = json_decode(file_get_contents($json));
+        $contents = file_get_contents($json);
+        if(!$contents)
+            throw new Exception("failed to load json descripion module: $json");
+        $description = json_decode($contents);
+        if(!$description)
+            throw new Exception("failed to decode json descripion module: $json");
         $rootContext = $this->xpath->query("//.");
+        if(!$rootContext)
+            throw new Exception("parsePage: failed to query root context");
         return $this->extract($description, $rootContext->item(0));
     }
 
@@ -108,12 +115,22 @@ class Parser
                 }
                 elseif(is_array($v))
                 {
-                    $nodes = $this->xpath->query($v[0], $xpathContext);
+                    list($ctx, $expr) = explode(":", $v[0]);
+                    $nodes = $this->xpath->query($ctx, $xpathContext);
+                    $a = array();
                     for($i=0; $i < $nodes->length; ++$i)
-                        $o[$k][$i] = $nodes->item($i)->nodeValue;
+                        $o[$k][$i] = $this->xpath->evaluate($expr, $nodes->item($i));
                 }
                 elseif(is_string($v))
-                    $o[$k]= trim($this->xpath->evaluate($v, $xpathContext));
+                {
+                    $data = $this->xpath->evaluate($v, $xpathContext);
+                    if(is_string($data))
+                        $data = trim($data);
+                    $o[$k]= $data;
+
+                }
+
+
                 else
                     throw new Exception;
             }

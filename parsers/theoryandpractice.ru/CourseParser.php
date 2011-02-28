@@ -16,30 +16,15 @@ include_once 'Course.php';
 class CourseParser extends Parser
 {
     protected $cityList;
-    protected $output_json;
-    protected $file_name_counter;
-
+    protected $file_name_counter = 0;
 
     function  __construct($include_snapshot, $debug_mode)
     {
         parent::__construct($include_snapshot, $debug_mode);
-
-        $this->file_name_counter = 0;
-        $this->output_json = fopen("output_course.json", "w+");
-        fwrite($this->output_json, "[\n");
     }
 
     function  __destruct() {
-        fwrite($this->output_json, "{}]");
-        fclose($this->output_json);
-        
         parent::__destruct();
-    }
-
-    protected function changeOutputJsonFile($fname)
-    {
-        fclose($this->output_json);
-        $this->output_json = fopen($fname, "w+");
     }
 
     function  parse()
@@ -78,9 +63,7 @@ class CourseParser extends Parser
                         $course['dump_type'] = 'text';
 
                         $Course = new Course($course);
-
-                        $this->changeOutputJsonFile("data/course_". ++$this->file_name_counter . ".json");
-                        fwrite($this->output_json, $Course->export()."\n");
+                        $Course->toJsonFile("data/course_". ++$this->file_name_counter . ".json");
                     }
 
                     if(!$o['next_page'])
