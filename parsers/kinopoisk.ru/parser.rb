@@ -243,8 +243,8 @@ end
 #puts get_city_cinemas(2).to_json
 
 def main
-  #cities = get_cities
-  cities = { 1 => 'Москва' }
+  cities = get_cities
+  #cities = { 1 => 'Москва' }
   cities.keys.each do |city_id|
     cinemas = get_city_cinemas(city_id)
     cinemas.keys.each do |cinema_id|
