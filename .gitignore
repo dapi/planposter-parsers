@@ -9,3 +9,4 @@ log/
 tmp/
 Gemfile.lock
 parsers/*/cookie.txt
+parsers/*/*.yml
