@@ -7,3 +7,5 @@ public/rotator.min.js
 parsers/*/data
 log/
 tmp/
+Gemfile.lock
+parsers/*/cookie.txt

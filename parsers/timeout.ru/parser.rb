@@ -7,8 +7,22 @@ require 'lib/parseutils'
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
+require 'curb'
+#require 'json'
 
 @parser = ParseUtils.new(false) # debug отключен
+
+@USERAGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.0.4) Gecko/2008102920 AdCentriaIM/1.7 Firefox/3.0.4"
+def easy_curl url
+  doc = Curl::Easy.perform(url) do |curl|
+    curl.headers["User-Agent"] = @USERAGENT
+    curl.headers["Reffer"] = "http://www.timeout.ru"
+    curl.enable_cookies = true
+    curl.cookiefile = 'cookie.txt'
+    curl.cookiejar = 'cookie.txt'
+  end
+  return doc.body_str
+end
 
 def retry_if_exception(&block)
   attempt = 10
@@ -32,7 +46,7 @@ end
 
 @host_url = 'http://www.timeout.ru'
 
-@places_yml_path = File.expand_path(File.dirname(__FILE__) + "places.yml")
+@places_yml_path = File.expand_path(File.dirname(__FILE__) + "/places.yml")
 begin
   @places = YAML.load_file(@places_yml_path)
 rescue
@@ -50,7 +64,7 @@ def get_place( place_type, place_id )
   end
   
   place_url = [@host_url, place_type, 'place', place_id].join('/')
-  doc = Nokogiri::HTML( open(place_url) )
+  doc = Nokogiri::HTML( easy_curl(place_url) )
   doc = doc.css("div[class='vcard context'] div.single").first()
   place['name'] = doc.css("div.headingH2 h1").text().strip
   place['address'] = doc.css("div.contento p.adr").text().strip
@@ -58,7 +72,7 @@ def get_place( place_type, place_id )
   return place
 end
 
-@events_details_yml_path = File.expand_path(File.dirname(__FILE__) + "events_details.yml")
+@events_details_yml_path = File.expand_path(File.dirname(__FILE__) + "/events_details.yml")
 begin
   @events_details = YAML.load_file(@events_details_yml_path)
 rescue
@@ -76,7 +90,7 @@ def get_event_details( event_category, event_id )
   end
   
   event_url = [@host_url, event_category, 'event', event_id].join('/')
-  doc = Nokogiri::HTML( open(event_url) )
+  doc = Nokogiri::HTML( easy_curl(event_url) )
   doc = doc.css("div[class='vcard context'] div.single").first()
   image_element = doc.css("div#fpic img").first()
   result['image_url'] = image_element['src'] if image_element != nil
@@ -106,7 +120,7 @@ def category_parse( category_name )
   category_url = [@host_url, category_name, 'schedule'].join('/')
   doc = nil
   retry_if_exception do
-    doc = Nokogiri::HTML( open(category_url) )
+    doc = Nokogiri::HTML( easy_curl(category_url) )
   end
   return if not doc
   dates = doc.css("select[name='date'] option")
@@ -115,10 +129,12 @@ def category_parse( category_name )
     category_url = [@host_url, category_name, 'schedule', date['value']].join('/')
     doc = nil
     retry_if_exception do
-      doc = Nokogiri::HTML( open(category_url) )
+      doc = Nokogiri::HTML( easy_curl(category_url) )
     end
     next if not doc
+    #puts doc.to_s
     events = doc.css("div.w-list div[class~='w-list-block']")
+    #puts events.length
     events.each do |event|
       next if event['class'].scan(/kino|teatr/).empty?
       result_event = {}
@@ -168,6 +184,7 @@ def category_parse( category_name )
           #####################################
           #####################################
           @parser.save_event result_event
+          #puts result_event.to_json
           #####################################
           #####################################
         end
@@ -177,8 +194,9 @@ def category_parse( category_name )
   end
 end
 
+easy_curl("http://www.timeout.ru/")
+easy_curl("http://www.timeout.ru/?city=2")
 #category_parse('cinema')
-
 @categories.keys.each { |x| category_parse(x) }
 
 places_yml = File.open(@places_yml_path, 'w')
