@@ -1,0 +1,18 @@
+{
+    "events" :
+    [{
+        "context" : "//table[contains(@id,'MainPage_GroupList')]/tr/td/table[1]/tr[2]",
+        "data" :
+        {
+            "image_url"    : "string(td[1]/img/@src)",
+             "url"         : "string(td[2]/a/@href)",
+             "title"       : "string(td[2]/a)",
+             "datetime"    : "string(td[2]/span/text()[2])",
+             "place"       : "string(td[2]/span/a)",
+             "address"     : "string(td[2]/span/a/@title)",
+             "placePageUrl" : "string(td[2]/span/a/@href)"
+        }
+    }],
+    "next_page" : "string(//a[@id='ctl00_MainPage_Numbers1Line_FutherLink']/@href)"
+}
+
