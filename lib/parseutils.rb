@@ -6,14 +6,14 @@ require 'json'
 require 'ostruct'
 
 class ParseUtils
-  
+
   attr_accessor :debug, :index
 
   def initialize(debug=false)
     self.index = 0
     self.debug = debug
   end
-  
+
   def generate_filename event
     filename = event.uid
     filename = (event.url.is_a?(Array) ?  event.url.join(',') : event.url) + event.subject unless filename
@@ -28,7 +28,7 @@ class ParseUtils
     zeros=(1..(6-event.index.to_s.length)).to_a.collect {'0'}.join
     "#{zeros}#{event.index}-" + filename + '.json'
   end
-  
+
   def save_event event
     return unless event
     event.delete 'dump' unless debug
@@ -44,14 +44,12 @@ class ParseUtils
 
   def load_file file
     puts file
-    json = File.open(file).read
-    event = JSON.parse(json)
-    if Event.create_from_parser event
-      File.delete(file)
-    end
+    event = JSON.parse(File.open(file).read)
+    Event.create_from_parser( event ) and File.delete(file)
     print "\n"
-    rescue
+  rescue Exception => e
+    puts e.message
+    puts e.backtrace.inspect
   end
-  
-  
- end
+
+end
