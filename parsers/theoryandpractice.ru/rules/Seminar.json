@@ -6,7 +6,7 @@
         "poster"    : "string(.//div[@class='seminarPoster']//img/@src)",
         "date"      : "string(.//span[@class='date'])",
         "time"      : "string(.//span[@class='time'])",
-        "descr"     : "string(.//div[starts-with(@class, 'seminarDescription')]//p)"
+        "descr"     : "string(.//div[starts-with(@class, 'seminarDescription')]//p)",
         "place" :
         {
             "context"   : ".//div[@class='placePreview']",

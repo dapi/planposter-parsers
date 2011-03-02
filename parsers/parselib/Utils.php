@@ -99,4 +99,25 @@ function json_fix_cyr($json_str)
     return $json_str;
 }
 
+function json_error_string()
+{
+    $e = json_last_error();
+    switch($e)
+    {
+        case JSON_ERROR_NONE:
+            return ' - No errors';
+        case JSON_ERROR_DEPTH:
+            return ' - Maximum stack depth exceeded';
+        case JSON_ERROR_CTRL_CHAR:
+            return ' - Unexpected control character found';
+        case JSON_ERROR_STATE_MISMATCH:
+        case JSON_ERROR_SYNTAX:
+            return ' - Syntax error, malformed JSON';
+        case JSON_ERROR_UTF8:
+            return '-Malformed UTF-8 characters, possibly incorrectly encoded';
+        defualt:
+            return $e;
+    }
+}
+
 ?>

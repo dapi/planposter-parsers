@@ -9,7 +9,7 @@
  *
  * @author Olg3andr
  */
-include_once 'Utils.php';
+include_once '../parselib/Utils.php';
 
 class Seminar
 {
@@ -115,13 +115,13 @@ class Seminar
             'url'       => $this->d['url'],
             'uid'       => $this->d['uid'],
             'image_url' => $this->d['poster'],
-            'subject'   => isset($this->d['title']) ? $this->d['title'] : '',
+            'subject'   => $this->d['title'],
             'category'  => $this->d['category'],
             'place'     => isset($this->d['place']['title']) ? $this->d['place']['title'] : '',
             'address'   => isset($this->d['place']['address']) ? $this->d['place']['address'] : '',
             'city'      => $this->d['city'],
             'date'      => $this->d['date'],
-            'time'      => isset($this->d['time']) ? $this->d['time'] : '',
+            'time'      => $this->d['time'],
             'period'    => '',
             'details'   => $this->getDetails(),
             'dump'      => $this->d['snapshot'],
