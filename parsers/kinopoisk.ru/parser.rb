@@ -10,6 +10,7 @@ require 'json'
 require 'curb'
 require 'iconv'
 #require 'jcode'
+require 'date'
 
 @parser = ParseUtils.new(false) # debug отключен
 
