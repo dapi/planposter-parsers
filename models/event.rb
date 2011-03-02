@@ -22,9 +22,9 @@ class Event
   property :image_url,   String
   property :details,     Text
 
-  belongs_to :category
-  belongs_to :city
-  belongs_to :source
+  belongs_to :category, :counter_cache=>true
+  belongs_to :city, :counter_cache=>true
+  belongs_to :source, :counter_cache=>true
 
   def self.concat(date,time)
     time = Time.parse time
