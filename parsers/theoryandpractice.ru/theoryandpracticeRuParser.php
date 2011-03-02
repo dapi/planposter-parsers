@@ -9,15 +9,18 @@
  *
  * @author J0nny
  */
-include_once '../parselib/ParserBase.php';
+
+include_once '../../parselib/ParserBase.php';
 include_once "Course.php";
 include_once "Seminar.php";
+
 class TheoryandpracticeRuParser extends ParserBase
 {
     protected $file_name_counter = 0;
     protected $skip_courses     = false;
     protected $skip_seminars    = false;
     protected $skip_lite_cities = false;
+    
     function  __construct($args)
     {
         parent::__construct(isset($args['d']));
@@ -27,7 +30,6 @@ class TheoryandpracticeRuParser extends ParserBase
         $this->skip_lite_cities = array_key_exists('skip-lite-cities', $args);
         $this->html->init("tmp/theoryandpractice_ru_cookies.txt");
         $this->html->setTimeOut(60);
-
     }
 
     function  parseCourses()
@@ -62,7 +64,7 @@ class TheoryandpracticeRuParser extends ParserBase
 
                     foreach( $o['url'] as $pageUrl)
                     {
-                        $this->deb($pageUrl);
+                        //$this->deb($domain . $pageUrl);
                         $course = $this->parsePage($domain . $pageUrl, "rules/Course.json");
                         $course['url'] = $domain . $pageUrl;
                         $course['source'] = $domain;
@@ -71,6 +73,8 @@ class TheoryandpracticeRuParser extends ParserBase
                         $course['city'] = $city;
                         $course['uid'] = '';
                         $course['dump_type'] = 'text';
+
+                        $this->deb( " ( Курс ) " . $course['title'] );
 
                         $Course = new Course($course);
                         $Course->toJsonFile("data/course_". ++$this->file_name_counter . ".json");
@@ -126,7 +130,7 @@ class TheoryandpracticeRuParser extends ParserBase
 
                 foreach( $o['url'] as $pageUrl)
                 {
-                    $this->deb($pageUrl);
+                    // $this->deb($domain . $pageUrl);
                     $seminar = $this->parsePage($domain . $pageUrl, $lite ? "rules/SeminarLite.json" : "rules/Seminar.json");
                     $seminar['url'] = $domain . $pageUrl;
                     $seminar['source'] = $domain;
@@ -137,6 +141,8 @@ class TheoryandpracticeRuParser extends ParserBase
                     $seminar['dump_type'] = 'text';
                     if($lite)
                         $seminar['lite'] = $lite;
+
+                    $this->deb( " ( Семинар ) " . $seminar['title'] );
 
                     $Seminar = new Seminar($seminar);
                     $Seminar->toJsonFile("data/seminar_". ++$this->file_name_counter . ".json");
