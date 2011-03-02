@@ -9,7 +9,7 @@
  *
  * @author J0nny
  */
-include "lib/ParserBase.php";
+include "../../parselib/ParserBase.php";
 include_once 'Event.php';
 // Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3
 // ASP.NET_SessionId
@@ -35,14 +35,16 @@ include_once 'Event.php';
 class ConcertRuParser extends ParserBase
 {
     protected $file_name_counter = 0;
-    function  __construct($debug_mode = true) {
-        parent::__construct($debug_mode);
-        $this->html->init("tmp/concert_ru_cookies.txt", "http://concert.ru");
+    protected $parse_details = false;
+    function  __construct($args) {
+        parent::__construct(isset($args['d']));
+        $this->html->init("tmp/concert_ru_cookies.txt");
+        $this->parse_details = array_key_exists('parse-details', $args);
     }
 
     function parse()
     {
-        $cityList = $this->parsePage("http://concert.ru", "rules/CityList.json");
+        $cityList = $this->parsePage("http://concert.ru", "rules/citylist.json");
 
         foreach($cityList as $j)
         {
@@ -52,29 +54,33 @@ class ConcertRuParser extends ParserBase
             if( $cityId == '0')
                 continue;
             $this->html->setCookie("cityID=$cityId; SearchPerPage=100");
-            $categoryList = $this->parsePage("http://concert.ru", "rules/CategoryList.json");
+            $categoryList = $this->parsePage("http://concert.ru", "rules/categorylist.json");
             $domain =  $this->html->getUrl();
             
             foreach($categoryList as $j)
             {
                 $name   = $j['name'];
                 $url    = $domain . '/' . $j['url'];
-                $this->deb("\tcategory: $name, url: $url");
+                //$this->deb("\tcategory: $name, url: $url");
+
+
                  $event_count = 0;
                 for(;;)
                 {
-                    $o = $this->parsePage($url, "rules/EventList.json");
+                    $o = $this->parsePage($url, "rules/eventlist.json");
                     foreach( $o['events'] as $data)
                     {
-                        $this->deb("\t\t" . ++$event_count . ".   " . $data['url']);
-                        $data['url']       = $domain . '/' . $data['url'];
-                        // $data['details']   = $this->parsePage($data['url'], "EventPage.json");
+                        //$this->deb("\t\t" . ++$event_count . ".   " . $data['url']);
+                        $this->deb("( $name ) " . $data['title']);
                         $data['source']    = $domain;
-                        $data['snapshot']  = $this->debug_mode ? $this->snapshot : '';
+                        $data['url']       = $domain . '/' . $data['url'];
                         $data['category']  = $name;
                         $data['city']      = $city;
                         $data['uid']       = '';
                         $data['dump_type'] = 'text';
+                        if($this->parse_details)
+                            $data += $this->ParsePage($data['url'], "rules/eventdetails.json");
+                        $data['snapshot']  = $this->debug_mode ? $this->snapshot : '';
                         $event = new Event($data);
                         $event->toJsonFile("data/" . ++$this->file_name_counter . ".json");
                     }
