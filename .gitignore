@@ -10,3 +10,6 @@ tmp/
 Gemfile.lock
 parsers/*/cookie.txt
 parsers/*/*.yml
+/parsers/cookie.txt
+/parsers/events_details.yml
+/parsers/places.yml

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'models/category'
 require 'models/city'
+require 'models/source'
 
 class Event
   include DataMapper::Resource
@@ -9,7 +10,7 @@ class Event
   # property :uid,         String
   property :subject,     String
   property :url,         String
-  property :source,      String
+  property :source_id,   Integer
   property :date,        Date
   property :start_time,  Time
   property :finish_time, Time
@@ -23,6 +24,7 @@ class Event
 
   belongs_to :category
   belongs_to :city
+  belongs_to :source
 
   def self.concat(date,time)
     time = Time.parse time
@@ -41,13 +43,16 @@ class Event
     category = Category.first( :name=>data["category"]) || Category.create(:name=>data["category"])
     # raise "Не найдена категория: #{data['category']} для #{data.inspect}" unless category
     city  = City.first(:name=>data["city"]) || City.create(:name=>data["city"])
-    data["subject"] = data["subject"].gsub('http://','').gsub('/','')
+    data["source"] = data["source"].gsub('http://','').gsub('/','').gsub('www.','')
     data.each_key do |key|
       data[key].strip! if data[key].is_a? String
     end
+
+    source = Source.first( :url=>data["source"] ) or raise "Не найден источник #{data['source']}"
+
     attrs = {
+      :source => source,
       :subject => data["subject"],
-      :source => data["source"],
       :date => data["date"],
       :address => data["address"],
       :place => data["place"],
@@ -72,6 +77,8 @@ class Event
       print " - DUP"
     else
       return nil unless event = create( attrs )
+      # event.source = source
+      # event.save
       # print "- CAN'T SAVE: #{event}"
     end
     print " = #{event.id}\n"

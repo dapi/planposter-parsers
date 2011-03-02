@@ -7,10 +7,11 @@ require 'ostruct'
 
 class ParseUtils
 
-  attr_accessor :debug, :index
+  attr_accessor :debug, :index, :remove_after_load
 
   def initialize(debug=false)
     self.index = 0
+    self.remove_after_load = true
     self.debug = debug
   end
 
@@ -45,10 +46,14 @@ class ParseUtils
   def load_file file
     puts file
     event = JSON.parse(File.open(file).read)
-    Event.create_from_parser( event ) and File.delete(file)
+    Event.create_from_parser( event ) and remove_after_load and File.delete(file)
     print "\n"
+  rescue Interrupt => e
+    raise e
   rescue Exception => e
+    puts e.class
     puts e.message
+    puts e.inspect
     puts e.backtrace.inspect
   end
 
