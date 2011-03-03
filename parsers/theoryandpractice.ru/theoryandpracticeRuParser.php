@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -20,7 +20,7 @@ class TheoryandpracticeRuParser extends ParserBase
     protected $skip_courses     = false;
     protected $skip_seminars    = false;
     protected $skip_lite_cities = false;
-    
+
     function  __construct($args)
     {
         parent::__construct(isset($args['d']));
@@ -35,13 +35,13 @@ class TheoryandpracticeRuParser extends ParserBase
     function  parseCourses()
     {
         $file_name_counter = 0;
-        $cityList = $this->parsePage("http://theoryandpractice.ru", "rules/CityList.json");
+        $cityList = $this->parsePage("http://theoryandpractice.ru", "rules/citylist.json");
 
         $k_exst = false;
         foreach($cityList as $c)
             if ($c['name'] == 'Москва')
                $k_exst = true;
-        
+
         if (!$k_exst)
             array_unshift($cityList, array('name' => 'Москва', 'url' => "http://theoryandpractice.ru/change_city/moscow"));
 
@@ -57,7 +57,7 @@ class TheoryandpracticeRuParser extends ParserBase
                 $url = $domain . "/courses";
                 for(;;)
                 {
-                    $o = $this->parsePage($url, "rules/CourseList.json");
+                    $o = $this->parsePage($url, "rules/courselist.json");
 
                     if(!sizeof($o['url']))
                          break;
@@ -65,7 +65,7 @@ class TheoryandpracticeRuParser extends ParserBase
                     foreach( $o['url'] as $pageUrl)
                     {
                         //$this->deb($domain . $pageUrl);
-                        $course = $this->parsePage($domain . $pageUrl, "rules/Course.json");
+                        $course = $this->parsePage($domain . $pageUrl, "rules/course.json");
                         $course['url'] = $domain . $pageUrl;
                         $course['source'] = $domain;
                         $course['snapshot'] = $this->debug_mode ? $this->snapshot : '';
@@ -92,7 +92,7 @@ class TheoryandpracticeRuParser extends ParserBase
     function  parseSeminars()
     {
         $file_name_counter = 0;
-        $cityList = $this->parsePage("http://theoryandpractice.ru", "rules/CityList.json");
+        $cityList = $this->parsePage("http://theoryandpractice.ru", "rules/citylist.json");
 
         $k_exst = false;
         foreach($cityList as $c)
@@ -123,7 +123,7 @@ class TheoryandpracticeRuParser extends ParserBase
 
             for(;;)
             {
-                $o = $this->parsePage($url, "rules/SeminarList.json");
+                $o = $this->parsePage($url, "rules/seminarlist.json");
 
                 if(!isset($o['url']) || !sizeof($o['url']))
                      break;
@@ -131,7 +131,7 @@ class TheoryandpracticeRuParser extends ParserBase
                 foreach( $o['url'] as $pageUrl)
                 {
                     // $this->deb($domain . $pageUrl);
-                    $seminar = $this->parsePage($domain . $pageUrl, $lite ? "rules/SeminarLite.json" : "rules/Seminar.json");
+                    $seminar = $this->parsePage($domain . $pageUrl, $lite ? "rules/seminarlite.json" : "rules/seminar.json");
                     $seminar['url'] = $domain . $pageUrl;
                     $seminar['source'] = $domain;
                     $seminar['snapshot'] = $this->debug_mode ? $this->snapshot : '';

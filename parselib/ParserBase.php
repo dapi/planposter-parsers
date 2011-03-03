@@ -1,5 +1,5 @@
 ﻿<?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -20,6 +20,7 @@ class ParserBase
     protected $debug_mode;
     protected $extractHelper;
     protected $xmlDoc;
+    protected $stdout;
 
     function  __construct($debug_mode = true)
     {
@@ -33,6 +34,11 @@ class ParserBase
 
 //        if($this->debug_mode)
 //            $this->debug_log = fopen("debug.log", "w+");
+        if($this->debug_mode)
+        {
+            $this->debug_log = fopen("debug.log", "w+");
+            $this->stdout = fopen('php://stdout', 'w');
+        }
     }
 
     function  __destruct() {
@@ -179,7 +185,7 @@ class ParserBase
     }
 
     function parse() {}
-    
+
 }
 
 ?>
