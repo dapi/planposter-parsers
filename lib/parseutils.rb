@@ -9,10 +9,10 @@ class ParseUtils
 
   attr_accessor :debug, :index, :remove_after_load
 
-  def initialize(debug=false)
+  def initialize(remove_after_load=false)
     self.index = 0
-    self.remove_after_load = true
-    self.debug = debug
+    self.remove_after_load = remove_after_load
+    self.debug = false
   end
 
   def generate_filename event
@@ -56,5 +56,6 @@ class ParseUtils
     puts e.inspect
     puts e.backtrace.inspect
   end
+
 
 end

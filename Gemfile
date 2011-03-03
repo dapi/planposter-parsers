@@ -10,6 +10,7 @@ gem 'i18n'
 gem 'nokogiri'
 gem 'russian'
 gem 'curb'
+gem 'carrierwave'
 # gem 'hoptoad_notifier'
 
 gem 'json'

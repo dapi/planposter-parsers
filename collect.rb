@@ -12,7 +12,7 @@ require 'lib/parser_runner'
 require 'lib/parseutils'
 
 parser = ParseUtils.new
-parser.remove_after_load = false
+# parser.remove_after_load = true
 ARGV.each do |dir|
   if File.directory?(dir)
     Dir.glob(dir+'*.json').sort.each do |file|

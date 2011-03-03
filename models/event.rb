@@ -69,6 +69,8 @@ class Event
     attrs[:start_time] = concat(attrs[:date], data["time"]) unless data["time"].blank? and attrs[:date].blank?
     attrs[:finish_time] = attrs[:start_time] + data["period"]*60 if attrs[:start_time] and data["period"].to_i>0
 
+    # Тут нужно использовать carrierwave для подгрузки attrs[:image_url]
+
     print "#{attrs[:date]} #{attrs[:start_time] || '-'} #{data['place']} (#{data['category']})\t| #{attrs[:subject]}"
     if event = Event.first(
         :subject => attrs[:subject],

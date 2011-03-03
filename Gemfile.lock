@@ -1,19 +1,19 @@
 GIT
-  remote: git://github.com/dapi/vlad-helpers.git
-  revision: bb025c8accd97129e4dba97017c5a419b767c5a2
-  specs:
-    vlad-helpers (0.2.7)
-
-GIT
   remote: https://github.com/markiz/dm-counter-cache.git
   revision: 14a4fed5e236553f9f5733de2053a9369616d92d
   specs:
     dm-counter-cache (1.0.3.20100921011510)
       dm-core (~> 1.0.0)
 
+PATH
+  remote: /home/danil/code/gems/vlad-helpers
+  specs:
+    vlad-helpers (0.2.7)
+
 GEM
   remote: http://rubygems.org/
   specs:
+    activesupport (3.0.5)
     addressable (2.2.4)
     capybara (0.4.1.2)
       celerity (>= 0.7.9)
@@ -24,6 +24,8 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (>= 0.0.27)
       xpath (~> 0.1.3)
+    carrierwave (0.5.2)
+      activesupport (~> 3.0)
     celerity (0.8.8)
     childprocess (0.1.7)
       ffi (~> 0.6.3)
@@ -133,6 +135,7 @@ PLATFORMS
 
 DEPENDENCIES
   capybara
+  carrierwave
   curb
   dm-core
   dm-counter-cache!
