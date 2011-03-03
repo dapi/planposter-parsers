@@ -41,7 +41,7 @@ Pathname('./parsers/').children.each do |entry|
         parser.remove_after_load = false
         imported_count = 0
         not_imported_count = 0
-        Dir.glob(parser_dir+'data/*.json').sort.each do |file|
+        Dir.glob('data/*.json').sort.each do |file|
           begin
             parser.load_file file
           rescue Exception => e
