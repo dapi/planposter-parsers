@@ -28,11 +28,9 @@ Pathname('./parsers/').children.each do |entry|
           source.parsing_finished_at = Time.now
           source.save
           next
-        else
-          source.parsing_result = 0
-          source.parsing_finished_at = Time.now
-          source.save
         end
+        source.parsing_result = 0
+        source.parsing_finished_at = Time.now
         #
         # импорт 
         source.state='import'
