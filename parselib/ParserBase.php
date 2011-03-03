@@ -1,5 +1,5 @@
 ﻿<?php
-/*
+/* 
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -32,8 +32,6 @@ class ParserBase
         if(!is_dir("tmp/") && !mkdir ("tmp/", 0777))
             throw new Exception("Ошибка создания директории tmp. Возможно нет прав на создание директории...");
 
-//        if($this->debug_mode)
-//            $this->debug_log = fopen("debug.log", "w+");
         if($this->debug_mode)
         {
             $this->debug_log = fopen("debug.log", "w+");
@@ -43,16 +41,19 @@ class ParserBase
 
     function  __destruct() {
         if ($this->debug_mode)
-//            fclose($this->debug_log);
-            unset($this->html);
-            unset($this->snapshot);
+            fclose($this->debug_log);
+        unset($this->html);
+        unset($this->snapshot);
     }
 
     protected function deb($str)
     {
         if ($this->debug_mode)
-            print "[". date("H:i:s")."] ". $str. "\n";
-//            fwrite($this->debug_log, "[". date("H:i:s")."] ". $str. "\n");
+        {
+            //print "[". date("H:i:s")."] ". $str. "\n";
+            fwrite($this->debug_log, "[". date("H:i:s")."] ". $str. "\n");
+            fwrite($this->stdout, "[". date("H:i:s")."] ". $str. "\n");
+        }
     }
 
     function xpath_from_url($url)
@@ -185,7 +186,7 @@ class ParserBase
     }
 
     function parse() {}
-
+    
 }
 
 ?>

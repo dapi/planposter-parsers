@@ -1,5 +1,5 @@
 <?php
-/*
+/* 
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -20,7 +20,7 @@ class TheoryandpracticeRuParser extends ParserBase
     protected $skip_courses     = false;
     protected $skip_seminars    = false;
     protected $skip_lite_cities = false;
-
+    
     function  __construct($args)
     {
         parent::__construct(isset($args['d']));
@@ -41,7 +41,7 @@ class TheoryandpracticeRuParser extends ParserBase
         foreach($cityList as $c)
             if ($c['name'] == 'Москва')
                $k_exst = true;
-
+        
         if (!$k_exst)
             array_unshift($cityList, array('name' => 'Москва', 'url' => "http://theoryandpractice.ru/change_city/moscow"));
 

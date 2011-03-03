@@ -1,0 +1,7 @@
+{
+    "url" :
+    [
+        "//div[@class='newMediumSeminar']//h3/a/@href:string(.)"
+    ],
+    "next_page" : "string(//div[@class='pagination']//a[contains(@class,'next_page')]/@href)"
+}
