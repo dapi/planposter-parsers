@@ -34,6 +34,7 @@ class Event
 
   def self.create_from_parser(data)
     raise "Не указана категория" if data["category"].blank?
+    raise "Не указан источник" if data["source"].blank?
     raise "Не указан город" if data["city"].blank?
     if data["date"].blank?
       print "Не указана дата, пока такие не обрабатываем"
@@ -48,7 +49,7 @@ class Event
       data[key].strip! if data[key].is_a? String
     end
 
-    source = Source.first( :url=>data["source"] ) or raise "Не найден источник #{data['source']}"
+    source = Source.first( :url=>data["source"] ) or Source.create( :url=>data["source"] )
 
     attrs = {
       :source => source,
