@@ -5,6 +5,7 @@ require 'models/source'
 
 class Event
   include DataMapper::Resource
+  include DataMapper::CounterCacheable
 
   property :id,          Serial
   # property :uid,         String

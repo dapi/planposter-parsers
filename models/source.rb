@@ -14,6 +14,7 @@ class Source
   property :import_finished_at, Time
   property :imported_count, Integer
   property :not_imported_count, Integer
+  property :events_count, Integer, :default => 0
 
   has n, :events
 
