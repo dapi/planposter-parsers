@@ -1,0 +1,8 @@
+{
+    "context" : "//table[contains(@id,'GroupHeaderTable')]//a",
+    "data" :
+		[{
+			"name"  : "string(.)",
+			"url"   : "string(@href)"
+		}]
+}
