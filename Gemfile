@@ -9,6 +9,7 @@ gem 'json'
 gem 'i18n'
 gem 'nokogiri'
 gem 'russian'
+gem 'curb'
 # gem 'hoptoad_notifier'
 
 gem 'json'

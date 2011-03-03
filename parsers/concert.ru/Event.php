@@ -9,7 +9,7 @@
  *
  * @author J0nny
  */
-include_once 'lib/Utils.php';
+include_once '../../parselib/Utils.php';
 class Event
 {
     protected $d;
@@ -25,6 +25,10 @@ class Event
         else
             $this->d['image_url'] = $this->d['source'] . '/' . $this->d['image_url'];
 
+        $re = "/.*Details\.aspx\?ActionID=([0-9]+)$/" ;
+        if(preg_match($re, $this->d['url'], $matches))
+            $this->d['uid'] = $matches[1];
+
         $re = "/([0-9]{2}).([0-9]{2}).([0-9]{4})\s+([0-9]{2}:[0-9]{2})/";
         $this->d['date'] = '';
         $this->d['time'] = '';
@@ -37,7 +41,14 @@ class Event
     }
     protected function getDetails()
     {
-        return '';
+        $s = '';
+        if(isset($this->d['organizer']))
+        {
+            $s .= "Организатор:\n" .  $this->d['organizer'] . "\n";
+        }
+        if(isset($this->d['descr']))
+            $s .= "Описание:\n" . $this->d['descr'] . "\n";
+        return $s;
     }
     public function toJsonString()
     {
@@ -57,11 +68,13 @@ class Event
             'time'      => $this->d['time'],
             'period'    => '',
             'details'   => $this->getDetails(),
-            'dump'      => $this->d['snapshot'],
+            'dump'      => iconv('windows-1251', 'utf-8', $this->d["snapshot"]),
             'dump_type' => $this->d['dump_type']
         );
-
-        return preg_replace("/\"\,\"/", "\",\n\"", json_fix_cyr(json_encode($json)));
+        $s = json_encode($json);
+        if(json_last_error())
+            throw new Exception(json_error_string());
+        return preg_replace("/\"\,\"/", "\",\n\"", json_fix_cyr($s));
     }
     public function toJsonFile($fname)
     {
