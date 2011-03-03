@@ -18,8 +18,8 @@ def easy_curl url
     curl.headers["User-Agent"] = @USERAGENT
     curl.headers["Reffer"] = "http://www.timeout.ru"
     curl.enable_cookies = true
-    curl.cookiefile = 'cookie.txt'
-    curl.cookiejar = 'cookie.txt'
+    curl.cookiefile = File.expand_path(File.dirname(__FILE__) + "/cookie.txt")
+    curl.cookiejar = File.expand_path(File.dirname(__FILE__) + "/cookie.txt")
   end
   return doc.body_str
 end
