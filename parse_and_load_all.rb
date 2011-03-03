@@ -24,12 +24,14 @@ Pathname('./parsers/').children.each do |entry|
           system(parser_dir+parser_file.basename)
         rescue Exception => e
           puts "parsing_error: #{e}"
-          source.parsing_result = 'parsing_error'
+          source.state = 'parsing_error'
+          source.parsing_result = $?
           source.parsing_finished_at = Time.now
           source.save
           next
         end
         source.parsing_result = 0
+        source.parsing_result = $?
         source.parsing_finished_at = Time.now
         #
         # импорт 
