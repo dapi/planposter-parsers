@@ -21,9 +21,9 @@ Pathname('./parsers/').children.each do |entry|
         source.parsing_started_at = Time.now
         source.save
         begin
-          system("./#{parser.basename}")
-        rescue
-          #puts 'parser error'
+          system(parser_dir+parser_file.basename)
+        rescue Exception => e
+          puts "parsing_error: #{e}"
           source.parsing_result = 'parsing_error'
           source.parsing_finished_at = Time.now
           source.save
