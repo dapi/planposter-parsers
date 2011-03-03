@@ -1,9 +1,0 @@
-{
-    "context" : "/html/body/form[@id='aspnetForm']/table[8]/tr[2]/td[3]/table[3]/tr/td[2]/table[2]",
-    "data" :
-    {
-        "organizer" : "string(//span[@id='ctl00_MainPage_lblActionManagerCompany'])",
-        "descr"     : "string(tr[5]/td/p[@class='text'])"
-    }
-
-}
