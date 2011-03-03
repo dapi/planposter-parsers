@@ -40,7 +40,7 @@ Pathname('./parsers/').children.each do |entry|
         source.save
         ##
         parser = ParseUtils.new
-        parser.remove_after_load = false
+        parser.remove_after_load = true
         imported_count = 0
         not_imported_count = 0
         Dir.glob('data/*.json').sort.each do |file|
