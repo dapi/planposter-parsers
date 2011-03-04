@@ -115,7 +115,7 @@ function json_error_string()
             return ' - Syntax error, malformed JSON';
         case JSON_ERROR_UTF8:
             return '-Malformed UTF-8 characters, possibly incorrectly encoded';
-        defualt:
+        default:
             return $e;
     }
 }

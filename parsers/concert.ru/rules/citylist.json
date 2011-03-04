@@ -1,8 +1,8 @@
 {
     "context" : "//div/select[@class='choose-city']/option",
     "data" :
-		[{
-			"name"  : "string(.)",
-			"id"    : "string(@value)"
-		}]
+    [{
+        "name"  : "string(.)",
+        "id"    : "string(@value)"
+    }]
 }

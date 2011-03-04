@@ -37,7 +37,7 @@ class ConcertRuParser extends ParserBase
     protected $file_name_counter = 0;
     protected $parse_details = false;
     function  __construct($args) {
-        parent::__construct(isset($args['d']));
+        parent::__construct($args);
         $this->html->init("tmp/concert_ru_cookies.txt");
         $this->parse_details = array_key_exists('parse-details', $args);
     }
@@ -80,7 +80,7 @@ class ConcertRuParser extends ParserBase
                         $data['dump_type'] = 'text';
                         if($this->parse_details)
                             $data += $this->ParsePage($data['url'], "rules/eventdetails.json");
-                        $data['snapshot']  = $this->debug_mode ? $this->snapshot : '';
+                        $data['snapshot']  = $this->include_snapshot ? $this->snapshot : '';
                         $event = new Event($data);
                         $event->toJsonFile("data/" . ++$this->file_name_counter . ".json");
                     }

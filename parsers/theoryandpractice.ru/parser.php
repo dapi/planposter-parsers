@@ -1,8 +1,6 @@
 #!/usr/bin/php
 <?php
-    header("Content-type: text/plain; charset=utf-8");
-
-    ini_set("max_execution_time", "9000000000000");
+    ini_set("max_execution_time", "0");
     ini_set('auto_detect_line_endings', TRUE);
 
     ini_set('html_errors', false);
@@ -13,41 +11,19 @@
 
     include_once 'theoryandpracticeRuParser.php';
 
-    if (isset($_REQUEST['d']) || isset($_REQUEST['skip-courses']) || isset($_REQUEST['skip-seminars']) || isset($_REQUEST['skip-lite-cities']))
-    {
-        if (isset($_REQUEST['d']))
-        {
-            $args['d'] = 0;
-            print "debug mode enabled\n";
-        }
-        if (isset($_REQUEST['skip-courses']))
-        {
-            $args['skip-courses'] = 0;
-            print "курсы будут пропущены";
-        }
-        if (isset($_REQUEST['skip-seminars']))
-        {
-            $args['skip-seminars'] = 0;
-            print "лекции будут пропущены";
-        }
-        if (isset($_REQUEST['skip-lite-cities']))
-        {
-            $args['skip-lite-cities'] = 0;
-            print "лекции для городов из категории lite будут пропущены";
-        }
-    }else
-    {
-        $args = getopt("d", array("skip-courses","skip-seminars","skip-lite-cities"));
+    $args = getopt("ds", array("skip-courses","skip-seminars","skip-lite-cities"));
 
-        if(isset($args['d']))
-            print "debug mode enabled\n";
-        if(isset($args['skip-courses']))
-            print "курсы будут пропущены";
-        if(isset($args['skip-seminars']))
-            print "лекции будут пропущены";
-        if(isset($args['skip-lite-cities']))
-            print "лекции для городов из категории lite будут пропущены";
-    }
+    if(isset($args['d']))
+        print "в вывод парсера будет включен снимок html-страницы в момент ее разбора\n";
+    if(isset($args['s']))
+        print "вывод отладочной информации отключен";
+    if(isset($args['skip-courses']))
+        print "курсы будут пропущены";
+    if(isset($args['skip-seminars']))
+        print "лекции будут пропущены";
+    if(isset($args['skip-lite-cities']))
+        print "лекции для городов из категории lite будут пропущены";
+    
     $parser = new TheoryandpracticeRuParser( $args );
     $parser->parse();
 ?>
