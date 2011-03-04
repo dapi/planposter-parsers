@@ -8,4 +8,13 @@ class City
 
   has n, :events
 
+  # TODO перейдет в параметр города
+  def time_zone
+    3
+  end
+
+  def time_zone_in_seconds
+    time_zone * 60 * 60
+  end
+
 end
