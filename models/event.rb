@@ -3,6 +3,9 @@ require 'models/category'
 require 'models/city'
 require 'models/source'
 
+require 'lib/image_downloader'
+require 'uri'
+
 class Event
   include DataMapper::Resource
   include DataMapper::CounterCacheable
@@ -71,10 +74,8 @@ class Event
     attrs[:start_time] = parse_time(city, data)
     raise "Не могу разобрать время #{data['date']} #{data['time']}" unless attrs[:start_time]
     attrs[:is_whole_day] = true if data["time"].blank?
-
     attrs[:finish_time] = attrs[:start_time] + data["period"]*60 if not attrs[:is_whole_day] and data["period"].to_i>0
 
-    # Тут нужно использовать carrierwave для подгрузки attrs[:image_url]
     puts "* #{data['url']}"
     puts "  #{data['city']} #{data['date']} #{data['time']} -> #{attrs[:start_time]} (tz:#{city.time_zone}) -  #{attrs[:is_whole_day] ? 'whole day' : attrs[:finish_time]}"
     print "  #{data['category']}\t| #{attrs[:subject]}"
@@ -90,7 +91,14 @@ class Event
       # event.save
       # print "- CAN'T SAVE: #{event}"
     end
-    print "\t = #{event.id}\n"
+
+    if attrs[:image_url]
+      uri = URI.parse(attrs[:image_url])
+      image_path = "images/" + uri.host + uri.path
+      ImageDownloader.download!(attrs[:image_url], image_path) if not File.file?(image_path)
+    end
+    
+    print " = #{event.id}\n"
     event
   end
 

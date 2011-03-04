@@ -12,7 +12,7 @@ require 'lib/parser_runner'
 require 'lib/parseutils'
 
 parser = ParseUtils.new
-parser.remove_after_load = true
+parser.remove_after_load = false
 
 calculate_only = false
 
