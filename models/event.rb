@@ -3,7 +3,7 @@ require 'models/category'
 require 'models/city'
 require 'models/source'
 
-require 'lib/image_uploader'
+require 'lib/image_downloader'
 require 'uri'
 
 class Event
@@ -85,14 +85,11 @@ class Event
       # event.source = source
       # event.save
       # print "- CAN'T SAVE: #{event}"
-      if attrs[:image_url]
-        image = ImageUploader.new
-        uri = URI.parse(attrs[:image_url])
-        image.cache_dir = "images/" + uri.host
-        image.cache_name = uri.path
-        image_path = image.cache_dir + image.cache_name
-        image.download!(attrs[:image_url]) if not File.file?(image_path)
-      end
+    end
+    if attrs[:image_url]
+      uri = URI.parse(attrs[:image_url])
+      image_path = "images/" + uri.host + uri.path
+      ImageDownloader.download!(attrs[:image_url], image_path) if not File.file?(image_path)
     end
     print " = #{event.id}\n"
     event
