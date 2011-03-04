@@ -140,9 +140,11 @@ class TheoryandpracticeRuParser extends ParserBase
                     $seminar['uid'] = '';
                     $seminar['dump_type'] = 'text';
                     if($lite)
+                    {
                         $seminar['lite'] = $lite;
-
-                    $this->deb( " ( Семинар ) " . $seminar['title'] );
+                        $this->deb( " ( Семинар ) " . $seminar['seminarDescription']['title'] );
+                    }else
+                        $this->deb( " ( Семинар ) " . $seminar['title'] );
 
                     $Seminar = new Seminar($seminar);
                     $Seminar->toJsonFile("data/seminar_". ++$this->file_name_counter . ".json");
@@ -161,7 +163,7 @@ class TheoryandpracticeRuParser extends ParserBase
         if(!$this->skip_courses)
         {
             $this->deb("COURSES:");
-            $this->parseCourses();
+           // $this->parseCourses();
         }
         if(!$this->skip_seminars)
         {
