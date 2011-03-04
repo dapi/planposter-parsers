@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 source 'http://rubygems.org'
 
-gem 'dm-core'
-gem 'dm-postgres-adapter'
-gem 'dm-paperclip'
+# gem 'dm-core'
+# gem 'dm-postgres-adapter'
+# gem 'dm-paperclip'
 
 # gem 'dm-zone-types' - нам не нужно, потому что мы все записываем в utc
 
-gem 'dm-counter-cache', :git => 'https://github.com/markiz/dm-counter-cache.git'
+# gem 'dm-counter-cache', :git => 'https://github.com/markiz/dm-counter-cache.git'
 gem 'json'
 gem 'i18n'
 gem 'nokogiri'
 gem 'russian'
 gem 'curb'
-gem 'carrierwave'
+# gem 'carrierwave'
 # gem 'hoptoad_notifier'
 
 gem 'json'

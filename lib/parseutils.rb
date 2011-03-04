@@ -11,7 +11,6 @@ class ParseUtils
 
   def initialize(remove_after_load=false)
     self.index = 0
-    self.remove_after_load = remove_after_load
     self.debug = false
   end
 
@@ -42,20 +41,5 @@ class ParseUtils
       f.write event.marshal_dump.to_json
     end
   end
-
-  def load_file file
-    puts file
-    event = JSON.parse(File.open(file).read)
-    Event.create_from_parser( event ) and remove_after_load and File.delete(file)
-    print "\n"
-  rescue Interrupt => e
-    raise e
-  rescue Exception => e
-    puts e.class
-    puts e.message
-    puts e.inspect
-    puts e.backtrace.inspect
-  end
-
 
 end

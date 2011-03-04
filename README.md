@@ -23,6 +23,9 @@
 
 На STDOUT можно выводить лог записи этих файлов, чтобы наблюдать за процессом сбора.
 
+Если сеансов несколько (например для кино), то можно каждый сеанс делать в отдельном файле,
+а можно указать время массивом в поле times вместо time.
+
 Аттрибут dump передавать только в случае запуска в дебаг-режиме (устанавливается аргументом -d)
 
     {
@@ -52,7 +55,7 @@ https://spreadsheets.google.com/ccc?key=0ArR1ApxjK8jPdEpWbk9kN1dGNEQwdmhEa19icTA
 
 # Примеры и примеры:
 
-[Пример json-результата](https://github.com/dapi/planposter-parsers/raw/master/utils/example.json)
+[Пример json-результата](https://github.com/dapi/planposter-parsers/raw/master/example.json)
 
 Парсинг данных:
 
