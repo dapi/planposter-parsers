@@ -20,6 +20,7 @@ class Event
   property :city_id,     Integer
   property :place,       String
   property :image_url,   String
+  property :is_whole_day, Boolean
   property :details,     Text
 
   belongs_to :category, :counter_cache=>true
@@ -30,8 +31,9 @@ class Event
     # TODO Учитывать timezone в соответсвии с городом
     # время в базе хранится в utc
     date = Date.parse data["date"]
-    time = Time.parse data["time"]
-
+    data["time"]=nil if data["time"].blank?
+    # Time.zone =
+    time = Time.parse(data["time"] || '00:00') || Time.parse('00:00')
     time = Time.utc( date.year, date.month, date.day, time.hour, time.min) - city.time_zone_in_seconds
   end
 
@@ -66,14 +68,16 @@ class Event
       :city_id  => city.id,
       :created_at => Time.now
     }
-    attrs[:start_time] = parse_time(city, data) unless data["time"].blank? and attrs[:date].blank?
-    attrs[:finish_time] = attrs[:start_time] + data["period"]*60 if attrs[:start_time] and data["period"].to_i>0
-    attrs[:is_whole_day] = true unless attrs[:finish_time]
+    attrs[:start_time] = parse_time(city, data)
+    raise "Не могу разобрать время #{data['date']} #{data['time']}" unless attrs[:start_time]
+    attrs[:is_whole_day] = true if data["time"].blank?
+
+    attrs[:finish_time] = attrs[:start_time] + data["period"]*60 if not attrs[:is_whole_day] and data["period"].to_i>0
 
     # Тут нужно использовать carrierwave для подгрузки attrs[:image_url]
-
-    puts "* #{data['city']} #{data['date']} #{data['time']} -> #{attrs[:start_time]} (tz:#{city.time_zone}) #{attrs[:is_whole_day] ? 'whole day' : ''}"
-    print "#{data['category']}\t| #{attrs[:subject]}"
+    puts "* #{data['url']}"
+    puts "  #{data['city']} #{data['date']} #{data['time']} -> #{attrs[:start_time]} (tz:#{city.time_zone}) -  #{attrs[:is_whole_day] ? 'whole day' : attrs[:finish_time]}"
+    print "  #{data['category']}\t| #{attrs[:subject]}"
     if event = Event.first(
         :subject => attrs[:subject],
         :start_time => attrs[:start_time],
