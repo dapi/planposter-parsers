@@ -5,6 +5,8 @@ public/rotator.min.js
 .#*
 /.rake_tasks*
 parsers/*/data
+parsers/*/data.bak
+parsers/*/debug*
 log/
 tmp/
 Gemfile.lock
