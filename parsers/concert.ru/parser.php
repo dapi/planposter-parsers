@@ -11,10 +11,13 @@ date_default_timezone_get('Europe/Moscow');
 
 include_once "ConcertRuParser.php";
 
-$args = getopt("d",array("parse-details"));
+$args = getopt("ds",array("parse-details"));
 
 if(isset($args['d']))
-    print "debug mode enabled\n";
+    print "в вывод парсера будет включен снимок html-страницы в момент ее разбора\n";
+if(isset($args['s']))
+    print "вывод отладочной информации отключен";
+
 print "parse details:";
 print isset($args['parse-details']) ? "yes\n" : "no\n";
 

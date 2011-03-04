@@ -11,10 +11,12 @@
 
     include_once 'theoryandpracticeRuParser.php';
 
-    $args = getopt("d", array("skip-courses","skip-seminars","skip-lite-cities"));
+    $args = getopt("ds", array("skip-courses","skip-seminars","skip-lite-cities"));
 
     if(isset($args['d']))
-        print "debug mode enabled\n";
+        print "в вывод парсера будет включен снимок html-страницы в момент ее разбора\n";
+    if(isset($args['s']))
+        print "вывод отладочной информации отключен";
     if(isset($args['skip-courses']))
         print "курсы будут пропущены";
     if(isset($args['skip-seminars']))

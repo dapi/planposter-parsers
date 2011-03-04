@@ -64,8 +64,14 @@ class HttpLib
     function loadFromUrl($url)
     {
         curl_setopt($this->session, CURLOPT_URL, $url);
-        $data = curl_exec($this->session);
-        if(!$data) throw new Exception(curl_error($this->session) . ": $url");
+        for($i=0;$i < 3;++$i)
+        {
+            $data = curl_exec($this->session);
+            if($data) 
+                break;
+        }
+        if(!$data)
+            throw new Exception(curl_error($this->session) . ": $url");
         $this->dumpheader(substr($data, 0, curl_getinfo($this->session,CURLINFO_HEADER_SIZE)));
         return substr($data, curl_getinfo($this->session,CURLINFO_HEADER_SIZE));
     }

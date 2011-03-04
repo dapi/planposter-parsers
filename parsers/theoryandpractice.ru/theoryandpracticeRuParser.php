@@ -23,7 +23,7 @@ class TheoryandpracticeRuParser extends ParserBase
     
     function  __construct($args)
     {
-        parent::__construct(isset($args['d']));
+        parent::__construct($args);
 
         $this->skip_courses     = array_key_exists('skip-courses', $args);
         $this->skip_seminars    = array_key_exists('skip-seminars', $args);
@@ -68,7 +68,7 @@ class TheoryandpracticeRuParser extends ParserBase
                         $course = $this->parsePage($domain . $pageUrl, "rules/course.json");
                         $course['url'] = $domain . $pageUrl;
                         $course['source'] = $domain;
-                        $course['snapshot'] = $this->debug_mode ? $this->snapshot : '';
+                        $course['snapshot'] = $this->include_snapshot ? $this->snapshot : '';
                         $course['category'] = 'Курс';
                         $course['city'] = $city;
                         $course['uid'] = '';
@@ -134,7 +134,7 @@ class TheoryandpracticeRuParser extends ParserBase
                     $seminar = $this->parsePage($domain . $pageUrl, $lite ? "rules/seminarlite.json" : "rules/seminar.json");
                     $seminar['url'] = $domain . $pageUrl;
                     $seminar['source'] = $domain;
-                    $seminar['snapshot'] = $this->debug_mode ? $this->snapshot : '';
+                    $seminar['snapshot'] = $this->include_snapshot ? $this->snapshot : '';
                     $seminar['category'] = 'Семинар';
                     $seminar['city'] = $city;
                     $seminar['uid'] = '';
@@ -163,7 +163,7 @@ class TheoryandpracticeRuParser extends ParserBase
         if(!$this->skip_courses)
         {
             $this->deb("COURSES:");
-           // $this->parseCourses();
+                $this->parseCourses();
         }
         if(!$this->skip_seminars)
         {

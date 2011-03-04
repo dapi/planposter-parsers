@@ -21,10 +21,12 @@ class ParserBase
     protected $extractHelper;
     protected $xmlDoc;
     protected $stdout;
+    protected $include_snapshot = false;
 
-    function  __construct($debug_mode = true)
+    function  __construct($args)
     {
-        $this->debug_mode = $debug_mode;
+        $this->debug_mode = ! array_key_exists('s', $args);
+        $this->include_snapshot = array_key_exists('d', $args);
         $this->html = new HttpLib();
 
         if(!is_dir("data/") && !mkdir ("data/", 0777))
