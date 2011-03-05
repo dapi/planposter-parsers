@@ -1,8 +1,6 @@
-config/config.yml
 .bundle
 .#*
 /.rake_tasks*
-imported_data/*
 parsers/*/data
 parsers/*/data.bak
 parsers/*/debug*
@@ -11,6 +9,8 @@ parsers/*/*.yml
 parsers/cookie.txt
 parsers/events_details.yml
 parsers/places.yml
+*/**/cookie*
+.emacs*
 log/
 tmp/
-Gemfile.lock
+.git
