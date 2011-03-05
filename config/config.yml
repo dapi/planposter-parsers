@@ -1,0 +1,5 @@
+test:
+  database_url: 'postgres://postgres:kal@localhost:5432/postgres3'
+
+development:
+  database_url: 'postgres://postgres:kal@localhost:5432/postgres3'
