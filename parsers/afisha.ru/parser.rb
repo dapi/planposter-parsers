@@ -17,7 +17,7 @@ require 'date'
 
 @parser = ParseUtils.new(false) # debug отключен
 
-@USERAGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.0.4) Gecko/2008102920 AdCentriaIM/1.7 Firefox/3.0.4"
+@USERAGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.21 (KHTML, like Gecko) Chrome/11.0.678.0 Safari/534.21"
 @to_utf8 = Iconv.new("utf-8", "windows-1251")
 @host_url = "http://www.afisha.ru"
 
@@ -109,8 +109,9 @@ def get_event_from_site( category, event_id )
   retry_if_exception do
     doc = Nokogiri::HTML( easy_curl(event_url) )
   end
-  return nil if not doc
+  return if not doc
   doc = doc.xpath("//div[@id='container']//div[@id='content']").first
+  return if not doc
   event_dump = doc.to_s
   event_name = doc.xpath(".//div[@class='b-object-summary']/div[1]/h1").text.gsub(/[\s]+/m, ' ').strip
   return nil if event_name.empty?
@@ -187,8 +188,10 @@ def get_place_from_site( city, category, place_id )
   retry_if_exception do
     doc = Nokogiri::HTML( easy_curl(place_url) )
   end
-  return nil if not doc
-  doc = doc.xpath("//div[@id='container']//div[@id='content']//div[@class='b-object-summary']").first
+  return if not doc
+  doc = doc.xpath("//div[@id='container']//div[@id='content']").first
+  return if not doc
+  doc = doc.xpath(".//div[@class='b-object-summary']").first
   place_dump = doc.to_s
   place_name = doc.xpath("./div[1]/h1").text.gsub(/[\s]+/m, ' ').strip
   address = find_address_in_garbage( doc.xpath("./p[1]").to_s )
@@ -236,7 +239,9 @@ def get_schedule_type_1( city, category, url_postfix )
     doc = Nokogiri::HTML( easy_curl(schedule_url) )
   end
   return [] if not doc
-  event_divs = doc.xpath("//div[@id='container']//div[@id='schedule']/div")
+  doc = doc.xpath("//div[@id='container']//div[@id='schedule']").first
+  return [] if not doc
+  event_divs = doc.xpath("./div")
   event_divs.each do |div|
     schedule_dump = div.to_s
     event_id = div.xpath(".//h3[1]/a[1]").first
@@ -305,7 +310,9 @@ def get_schedule_type_2( city, category, url_postfix )
     doc = Nokogiri::HTML( easy_curl(schedule_url) )
   end
   return [] if not doc
-  event_trs = doc.xpath("//div[@id='container']//div[@id='schedule']/table[1]/tr")
+  doc = doc.xpath("//div[@id='container']//div[@id='schedule']").first
+  return [] if not doc
+  event_trs = doc.xpath("./table[1]/tr")
   event_trs.each do |tr|
     schedule_dump = tr.to_s
     event = tr.xpath(".//h3[1]/a[1]").first
@@ -351,7 +358,9 @@ def get_schedule_type_3( city, category, url_postfix )
     doc = Nokogiri::HTML( easy_curl(schedule_url) )
   end
   return [] if not doc
-  place_divs = doc.xpath("//div[@id='container']//div[@id='schedule']/div")
+  doc = doc.xpath("//div[@id='container']//div[@id='schedule']").first
+  return [] if not doc
+  place_divs = doc.xpath("./div")
   place_divs.each do |div|
     schedule_dump = div.to_s
     place = div.xpath("./div[1]/h3[1]/a[1]").first
@@ -411,7 +420,9 @@ def get_schedule_url_postfixes( city, category )
     doc = Nokogiri::HTML( easy_curl(schedule_dates_url) )
   end
   return [] if not doc
-  a_dates = doc.xpath("//div[@id='content']//div[@class='m-schedule-top-mrg'][1]//select[contains(@id, 'DateNavigator')][1]/option")
+  doc = doc.xpath("//div[@id='content']//div[@class='m-schedule-top-mrg'][1]").first
+  return [] if not doc
+  a_dates = doc.xpath(".//select[contains(@id, 'DateNavigator')][1]/option")
   a_dates.each do |a_date|
     dates.push( a_date['value'] )
   end
@@ -447,6 +458,7 @@ end
 ######################################################################
 
 def main
+  `#{File.expand_path(File.dirname(__FILE__) + "/get_cookies.rb")}`
   cities = get_cities
   #cities = { 'msk' => 'Москва' }
   cities.keys.each do |city|
