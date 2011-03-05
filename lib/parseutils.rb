@@ -4,6 +4,7 @@ require 'rubygems'
 require 'russian'
 require 'json'
 require 'ostruct'
+require 'curb'
 
 class ParseUtils
 
