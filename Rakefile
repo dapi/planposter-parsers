@@ -9,7 +9,8 @@ namespace :vlad do
   task :deploy do
     deploy_to='wwwdata@planposter.com:planposter-parsers'
     # '.git' --exclude '.*' --exclude 'parsers/*/data*' --exclude 'cookie*' --exclude 'tmp/' --exclude 'Gem*'
-    system "rsync --exclude-from=.gitignore  --delete --delete-excluded -vur  . #{deploy_to}"
+    #  --delete-excluded
+    system "rsync --exclude-from=.gitignore  --delete -vur  . #{deploy_to}"
 
   end
 end

@@ -1,4 +1,5 @@
 .bundle
+data/*
 .#*
 /.rake_tasks*
 parsers/*/data
