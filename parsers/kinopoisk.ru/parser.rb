@@ -14,7 +14,7 @@ require 'date'
 
 @parser = ParseUtils.new(false) # debug отключен
 
-@USERAGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.0.4) Gecko/2008102920 AdCentriaIM/1.7 Firefox/3.0.4"
+@USERAGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.21 (KHTML, like Gecko) Chrome/11.0.678.0 Safari/534.21"
 @to_utf8 = Iconv.new("utf-8", "windows-1251")
 @host_url = "http://www.kinopoisk.ru"
 
@@ -69,6 +69,9 @@ def easy_curl url
   doc = Curl::Easy.perform(url) do |curl|
     curl.headers["User-Agent"] = @USERAGENT
     curl.headers["Reffer"] = "http://www.kinopoisk.ru"
+    curl.enable_cookies = true
+    curl.cookiefile = File.expand_path(File.dirname(__FILE__) + "/cookie.txt")
+    curl.cookiejar = File.expand_path(File.dirname(__FILE__) + "/cookie.txt")
   end
   return doc.body_str
 end
@@ -236,12 +239,16 @@ def get_movie_from_site(movie_id)
   movie
 end
 
+`#{File.expand_path(File.dirname(__FILE__) + "/get_cookies.rb")}`
+
 #puts get_movie(474714).to_json
 #puts get_movie(471158).to_json
 #puts get_cinema_movies(263348).to_json
 #puts get_cinema_movies(264301).to_json
 #puts get_city_cinemas(1).to_json
 #puts get_city_cinemas(2).to_json
+#puts get_cities.to_json
+#puts easy_curl( [@host_url, 'level/9'].join('/') )
 
 def main
   cities = get_cities
