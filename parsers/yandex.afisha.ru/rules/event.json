@@ -1,0 +1,25 @@
+{
+    "image_url" : "string(//ul[@id='event-gallery-images']/li[1]/a/@href)",
+    "image_url_ext" : "string(//div[@class='event-media']/img/@src)",
+    "descr" : "string(//table[@class='top-adv']//dl/dd/p)",
+    "descr_ext" : "string(//table[@class='top-adv']//td/dl[@class='critique']/dd)",
+    "placeList" :
+    {
+        "context" : "//table[@class='chooser_data']//tr[@class='place']",
+        "data" :
+        [{
+            "title" : "string(.//td[1]/a)",
+            "place_id" : "string(.//td[1]/a/@data-id)",
+            "descr" : "string(.//td[1]/a[@class='place_title']/@title)",
+            "times" : [".//td[3]/ul/li[contains(@class, 'vevent')]/a/i[@class='in_time']:string(.)"]
+        }]
+    },
+    "placeListExt" :
+    {
+        "context" : "//div[@class='relative']",
+        "data" :
+        {
+            "title" : "string(.//h2/a)"
+        }
+    }
+}
