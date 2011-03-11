@@ -10,7 +10,7 @@ namespace :vlad do
     deploy_to='wwwdata@planposter.com:planposter-parsers'
     # '.git' --exclude '.*' --exclude 'parsers/*/data*' --exclude 'cookie*' --exclude 'tmp/' --exclude 'Gem*'
     #  --delete-excluded
-    system "rsync --exclude-from=.gitignore  --delete -vur  . #{deploy_to}"
+    system "rsync --exclude-from=.gitignore -vur  . #{deploy_to}"
 
   end
 end
