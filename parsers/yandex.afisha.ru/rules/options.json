@@ -1,0 +1,5 @@
+{
+    "debug_mode" : "1",
+    "include_snapshot" : "0",
+    "day_limit" : "14"
+}

@@ -119,5 +119,4 @@ function json_error_string()
             return $e;
     }
 }
-
 ?>

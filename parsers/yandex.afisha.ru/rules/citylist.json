@@ -1,0 +1,8 @@
+{
+    "context" : ".//div[@class='choose_city']/div[@class='country']/ul/li/a",
+    "data" :
+    [{
+        "name" : "string(.)",
+        "url"  : "string(@href)"
+    }]
+}

@@ -1,0 +1,32 @@
+{
+    "events" :
+    [{
+        "context" : "//table[@class='chooser_data']//tr",
+        "data" :
+        {
+             "url"          : "string(.//td[1]/a/@href)",
+             "subject"      : "string(.//td[1]/a)",
+             "category"     : "string(.//td[2])",
+             "time"         : 
+             {
+                "context" : "./td[4]/ul/li",
+                "data" :
+                {
+                    "t_arr" : ["./a[@href='#']/i:string(.)"],
+                    "t_text" : "string(.)"
+                }
+             }
+        }
+    }],
+    "next_week" : "string(//table[@class='chooser_weeks']//tr[@class='weeks']/td[@id='next']/a/@href)",
+    "next_day" : ["//table[@class='chooser_weeks']//tr[@class='days']/td[not(contains(@class, 'inactive'))]/div/a/@href:string(.)"],
+    "next_page" :
+    [{
+        "context" : "//div[@class='arrows']/a",
+        "data" :
+        {
+            "url"  : "string(./@href)",
+            "name" : "string(.)"
+        }
+    }]
+}
