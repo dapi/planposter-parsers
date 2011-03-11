@@ -33,10 +33,13 @@ def retry_if_exception(&block)
   attempt = 10
   begin
     return yield
-  rescue OpenURI::HTTPError => e
-    code = e.to_s.split()[0].to_i
+  #rescue OpenURI::HTTPError => e
+  #  code = e.to_s.split()[0].to_i
+  #  attempt -= 1
+  #  retry if attempt > 0 and code == 500
+  rescue Exception => e
     attempt -= 1
-    retry if attempt > 0 and code == 500
+    retry if attempt > 0
   end
 end
 
