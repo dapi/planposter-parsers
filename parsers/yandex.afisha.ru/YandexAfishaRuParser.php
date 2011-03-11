@@ -16,11 +16,18 @@ include "Event.php";
 class YandexAfishaRuParser extends ParserBase{
     //put your code here
 
+    protected $day_counter;
+    protected $is_day_count_limited;
+    protected $day_limit = 0;
     protected $places;
 
     function  __construct($args) {
         parent::__construct($args);
         
+        $this->is_day_count_limited = array_key_exists('l', $args);
+        if ($this->is_day_count_limited)
+            $this->day_limit = $args['l'];
+
         $this->html->init("tmp/yandex_afisha_ru_cookies.txt");
         $this->places = array();
     }
@@ -36,12 +43,19 @@ class YandexAfishaRuParser extends ParserBase{
         for(;;)
         {
             $j = each($cityList);
+
+            $this->day_counter = 0;
             
             // выходим, если нет больше городов
             if (!$j) break;
 
             $city   = $j[1]['name'];
             $cityUrl = $j[1]['url'];
+            if(preg_match("/\/(\w+)\//", $cityUrl, $cityNameShort))
+                $cityNameShort = $cityNameShort[1];
+            else
+                $cityNameShort = '';
+
             $this->deb("city: $city, url: $cityUrl");
 
             //заходим в выбиралку
@@ -59,6 +73,9 @@ class YandexAfishaRuParser extends ParserBase{
                 
                 for(;;)
                 {
+                    if ($this->is_day_count_limited)
+                        $this->day_counter++;
+
                     $next_day = each($next_days);
                     if (isset($next_day['value']) && $next_day['value'])
                     {
@@ -91,7 +108,7 @@ class YandexAfishaRuParser extends ParserBase{
                                 $data += $this->parsePage($data['url'], "rules/event.json");
 
                                 $Event = new Event($data);
-                                $Event->toJsonFile("data/" . $data['date'] . "_". $data['uid'] .".json");
+                                $Event->toJsonFile("data/". $cityNameShort."_". $data['date'] . "_". $data['uid'] .".json");
 
                                 sleep(1);
                             }
@@ -113,8 +130,14 @@ class YandexAfishaRuParser extends ParserBase{
                         }
                     }else
                         break;
-                }
 
+                    // ограничение глубины парсера
+                    if ($this->is_day_count_limited && $this->day_counter == $this->day_limit)
+                        break;
+                }
+                if ($this->is_day_count_limited && $this->day_counter == $this->day_limit)
+                    break;
+                
                 $o = $this->parsePage($domain. $next_week, "rules/eventlist.json");
                 $next_days = $o['next_day'];
                 $next_week = $o['next_week'];
