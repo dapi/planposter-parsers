@@ -20,6 +20,7 @@ class YandexAfishaRuParser extends ParserBase{
     protected $is_day_count_limited;
     protected $day_limit = 0;
     protected $places;
+    protected $sleep = 0;
 
     function  __construct($args) {
         parent::__construct($args);
@@ -28,6 +29,7 @@ class YandexAfishaRuParser extends ParserBase{
         if ($this->is_day_count_limited)
             $this->day_limit = $args['l'];
 
+        $this->sleep = isset($args['t']) ? (int)$args['t'] : 0;
         $this->html->init("tmp/yandex_afisha_ru_cookies.txt");
         $this->places = array();
     }
@@ -110,7 +112,8 @@ class YandexAfishaRuParser extends ParserBase{
                                 $Event = new Event($data);
                                 $Event->toJsonFile("data/". $cityNameShort."_". $data['date'] . "_". $data['uid'] .".json");
 
-                                sleep(1);
+                                if ($this->sleep)
+                                    sleep($this->sleep);
                             }
 
                             $next_page = $o['next_page'];

@@ -31,6 +31,9 @@ if (is_file($json))
     
     if (isset($description->day_limit) && (int)$description->day_limit > 0)
         $args['l'] = $description->day_limit;
+
+    if (isset($description->sleep))
+        $args['t'] = $description->sleep;
 }
 
 if(isset($args['d']))
@@ -39,7 +42,9 @@ if(isset($args['s']))
     print "вывод отладочной информации отключен\n";
 if(isset($args['l']))
     print "глубина парсинга ". $args['l'] ." дня(ей)\n";
-
+if (isset($args['t']))
+    print "задержка работы скрипта ". $args['t'] ." сек.\n";
+    
 $parser = new YandexAfishaRuParser( $args );
 $parser->parse();
 
