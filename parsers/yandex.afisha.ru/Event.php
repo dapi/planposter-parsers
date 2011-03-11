@@ -35,15 +35,15 @@ class Event
 
         if (isset($this->d['time']['t_arr']))
         {
-            $size = sizeof($this->d['time']['t_arr']);
-            if(!$size)
+            $size = 0;
+            if ( isset($this->d['time']['t_text']) && preg_match("/(весь\sдень)/", $this->d['time']['t_text'], $m ) )
             {
-                if ( $this->d['time']['t_text'] && preg_match("/(весь\sдень)/", $this->d['time']['t_text'], $m ) )
-                {
-                    $this->d['period'] = 1440;
-                    $this->d['time'] = '00:00';
-                }
-            }elseif($size > 1)
+                $this->d['period'] = 1440;
+                $this->d['time'] = '00:00';
+            }else
+                $size = sizeof($this->d['time']['t_arr']);
+            
+            if($size > 1)
             {
                 $this->d['details'] .= "Время: ";
                 foreach($this->d['time']['t_arr'] as $t)
@@ -63,8 +63,6 @@ class Event
         }
         if (is_array($this->d['time']))
             $this->d['time'] = '';
-
-        
 
         if (preg_match("/Кино/", $this->d['category']))
         {

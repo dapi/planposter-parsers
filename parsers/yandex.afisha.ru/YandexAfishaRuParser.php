@@ -31,6 +31,7 @@ class YandexAfishaRuParser extends ParserBase{
         $cityList = $this->parsePage($domain . "/change_city/", "rules/citylist.json");
 
         //$cityList[0] = array('name' => 'Москва' , 'url' => '/msk/');
+        //$cityList[0] = array('name' => 'Минск' , 'url' => '/mnk/');
 
         for(;;)
         {
@@ -44,8 +45,9 @@ class YandexAfishaRuParser extends ParserBase{
             $this->deb("city: $city, url: $cityUrl");
 
             //заходим в выбиралку
-            //$url = $domain. $cityUrl ."events/?date=". date("Y") ."-". date("m") ."-". date("d") ."&limit=100&page=1";
-            $url = $domain. $cityUrl ."events/?date=2011-03-26&limit=100&page=1";
+            $url = $domain. $cityUrl ."events/?date=". date("Y") ."-". date("m") ."-". date("d") ."&limit=100&page=1";
+            //$url = $domain. $cityUrl ."events/?date=2011-03-11&limit=100&page=1";
+            
             $o = $this->parsePage($url, "rules/eventlist.json");
 
             $next_days = $o['next_day'];
@@ -90,6 +92,8 @@ class YandexAfishaRuParser extends ParserBase{
 
                                 $Event = new Event($data);
                                 $Event->toJsonFile("data/" . $data['date'] . "_". $data['uid'] .".json");
+
+                                sleep(1);
                             }
 
                             $next_page = $o['next_page'];
