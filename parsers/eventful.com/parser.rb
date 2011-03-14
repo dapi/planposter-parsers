@@ -25,6 +25,9 @@ def easy_curl url
     curl.enable_cookies = true
     curl.cookiefile = File.expand_path(File.dirname(__FILE__) + "/cookie.txt")
     curl.cookiejar = File.expand_path(File.dirname(__FILE__) + "/cookie.txt")
+    curl.timeout = 30
+    curl.follow_location = true
+    curl.max_redirects = 5
   end
   return doc.body_str
 end
@@ -38,6 +41,7 @@ def retry_if_exception(&block)
   #  attempt -= 1
   #  retry if attempt > 0 and code == 500
   rescue Exception => e
+    #puts e
     attempt -= 1
     retry if attempt > 0
   end
@@ -130,7 +134,7 @@ end
 
 #puts get_categoriy_events('/events/categories/music', 1).to_json
 #puts get_categoriy_events('/events/categories/singles_social', 6)
-#puts get_categoriy_events('/events/categories/festivals_parades', 4)
+#puts get_categoriy_events('/events/categories', 758)
 
 ######################################################################
 ######################################################################
@@ -314,6 +318,7 @@ def get_movies_events date, page
       movies_table.xpath("./tbody/tr").each do |mov|
         #event = Marshal.load( Marshal.dump(location) )
         movie_url = mov.xpath("./td[@class='title']//a").first['href'].gsub(/\/showtimes$/,'')
+        next if not movie_url
         times = mov.xpath("./td[contains(@class,'showtimes')]").text.split('|')
         times.each do |time|
           event = Marshal.load( Marshal.dump(location) )
@@ -348,7 +353,7 @@ def get_movie_from_site movie_url
   retry_if_exception do
     doc = Nokogiri::HTML( easy_curl(movie_url) )
   end
-  return [] if not doc
+  return if not doc
   event['dump'] = doc.xpath("//div[@class='alpha']").to_s
   event['dump_type'] = 'text'
   #
@@ -375,15 +380,16 @@ def get_movie_from_site movie_url
   event
 end
 
-@movies_yml_path = File.expand_path(File.dirname(__FILE__) + "/movies.yml")
-begin
-  @movies = YAML.load_file(@movies_yml_path)
-rescue
-  @movies = {}
-end
+#@movies_yml_path = File.expand_path(File.dirname(__FILE__) + "/movies.yml")
+#begin
+#  @movies = YAML.load_file(@movies_yml_path)
+#rescue
+#  @movies = {}
+#end
+@movies = {}
 
 def get_movie url
-  url = url.gsub('http://','')
+  #url = url.gsub('http://','')
   movie = @movies[url]
   if not movie
     movie = get_movie_from_site(url)
@@ -394,7 +400,8 @@ def get_movie url
 end
 
 #puts get_movie('http://movies.eventful.com/drive-angry-reald-3d-/M0-001-000011324-2').to_json
-#get_movie_from_site('http://movies.eventful.com/unknown-/M0-001-000010446-6').to_json
+#puts get_movie_from_site('http://movies.eventful.com/le-m%C3%A3cano-/M0-001-000018591-1').to_json
+#puts get_movie_from_site('http://movies.eventful.com/le-m%C3%A9cano-/M0-001-000018591-1').to_json
 
 ######################################################################
 ######################################################################
@@ -442,8 +449,8 @@ end
 def main
   `#{File.expand_path(File.dirname(__FILE__) + "/get_cookies.rb")}`
   parse_movies
-  movies_yml = File.open(@movies_yml_path, 'w')
-  movies_yml.write( @movies.to_yaml )
+  #movies_yml = File.open(@movies_yml_path, 'w')
+  #movies_yml.write( @movies.to_yaml )
   parse_categroies
 end
 
