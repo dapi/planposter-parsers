@@ -56,13 +56,14 @@ def parse_event eid
   @parsed_events[eid] = 1
   @events.delete(eid)
   url = "http://www.#{@uri}/json/search/event?aid=#{eid}"
-  doc = nil
+  json_events = nil
   retry_if_exception do
     doc = easy_curl(url)
+    json_events = JSON.parse(doc)['response']['docs']
   end
-  return if not doc
+  return if not json_events
   events = []
-  JSON.parse(doc)['response']['docs'].each do |e|
+  json_events.each do |e|
     e['AttractionId'].each do |new_id|
       @events[new_id] = 1 if not @parsed_events[new_id]
     end
@@ -70,11 +71,11 @@ def parse_event eid
     next if not (index and e['AttractionName'][index])
     e['MajorGenre'].each do |category|
       event = {}
-      event['country'] = e['VenueCountry']
-      event['region']  = e['VenueState'] if e['VenueState']
-      event['city']    = e['VenueCity']
-      event['address'] = e['VenueAddress']
-      event['place']   = e['VenueName']
+      event['country'] = CGI.unescapeHTML e['VenueCountry'] if e['VenueCountry']
+      event['region']  = CGI.unescapeHTML e['VenueState'] if e['VenueState']
+      event['city']    = CGI.unescapeHTML e['VenueCity'] if e['VenueCity']
+      event['address'] = CGI.unescapeHTML e['VenueAddress'] if e['VenueAddress']
+      event['place']   = CGI.unescapeHTML e['VenueName'] if e['VenueName']
       next if not (event['city'] and event['address'] and event['place'])
       datetime = Time.parse e['EventDate'] # UTC
       event['date']    = "#{datetime.year}-#{"%02d"%datetime.month}-#{"%02d"%datetime.day}"
@@ -104,12 +105,13 @@ end
 
 def get_subcategory_events(category, subcategory)
   url = "http://www.#{@uri}/json/browse/#{category}?g=#{URI.escape(subcategory)}&select=n90"
-  doc = nil
+  json_events = nil
   retry_if_exception do
     doc = easy_curl(url)
+    json_events = JSON.parse(doc)['response']['docs']
   end
-  return [] if not doc
-  JSON.parse(doc)['response']['docs'].each do |e|
+  return [] if not json_events
+  json_events.each do |e|
     e['AttractionId'].each do |eid|
       @events[eid] = 1 if eid
     end
