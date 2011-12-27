@@ -6,6 +6,7 @@ require 'rubygems'
 require 'rake'
 
 namespace :vlad do
+  desc 'deploy parsers'
   task :deploy do
     deploy_to='wwwdata@planposter.com:planposter-parsers'
     # '.git' --exclude '.*' --exclude 'parsers/*/data*' --exclude 'cookie*' --exclude 'tmp/' --exclude 'Gem*'

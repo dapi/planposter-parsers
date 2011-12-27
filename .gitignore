@@ -1,5 +1,8 @@
 .bundle
 data/*
+parsers/*/parsing.log
+imported_data/
+bad_data/
 .#*
 /.rake_tasks*
 parsers/*/data
